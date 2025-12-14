@@ -100,7 +100,7 @@
       100%{ opacity:.25; transform: scale(1); }
     }
 
-    /* 오너먼트: 보기 전용(클릭 불가) */
+    /* 오너먼트: 보기 전용 */
     .ornament{
       position:absolute;
       width:78px;
@@ -116,7 +116,6 @@
       height:auto;
       display:block;
     }
-
     .note{
       position:absolute;
       right:2px;
@@ -286,6 +285,25 @@
       font-size: 13px;
       opacity: .85;
     }
+
+    /* 상태 배지 */
+    .statusRow{
+      width:min(520px, 92vw);
+      margin: 0 auto 10px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.14);
+      backdrop-filter: blur(8px);
+      font-size:13px;
+      opacity:.95;
+    }
   </style>
 </head>
 
@@ -296,7 +314,14 @@
     <h1>🎄 연지의 편지함 🎄</h1>
     <div class="sub">로그인 후 메일박스(📮)를 누르고 ✉️를 눌러 편지를 확인해</div>
 
-    <div class="loginPanel" id="loginPanel">
+    <!-- 로그인 상태 표시 + 로그아웃 -->
+    <div class="statusRow">
+      <div class="pill" id="authState">상태: 확인 중...</div>
+      <button id="logoutBtn" class="musicBtn" style="margin:0; display:none;">로그아웃</button>
+    </div>
+
+    <!-- ✅ 로그인 패널: 절대 자동으로 숨기지 않음 -->
+    <div class="loginPanel" id="loginPanel" style="display:block;">
       <input id="email" placeholder="연지 이메일" autocomplete="username">
       <input id="password" type="password" placeholder="비밀번호" autocomplete="current-password">
       <button id="loginBtn">로그인</button>
@@ -321,7 +346,6 @@
       <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
       <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
 
-      <!-- 6개 오너먼트(작성자와 동일 배치, 보기 전용) -->
       <div class="ornament" style="left:50%; top:22%;" data-photo="photo1">
         <img src="photo1.png" alt="p1a"><div class="note">✉️</div>
       </div>
@@ -364,7 +388,8 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
   import {
-    getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, onAuthStateChanged
+    getAuth, setPersistence, browserSessionPersistence,
+    signInWithEmailAndPassword, onAuthStateChanged, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
   import {
     getFirestore, collection, onSnapshot, query, orderBy
@@ -437,15 +462,17 @@
     lettersEl.innerHTML = `<div class="item"><div class="msg">연지 계정으로 로그인해야 편지를 볼 수 있어.</div></div>`;
   }
 
-  // ===== 로그인 상태 =====
+  // ===== 로그인/상태 =====
+  const authStateEl = document.getElementById("authState");
+  const logoutBtn = document.getElementById("logoutBtn");
+
   let loggedIn = false;
 
   onAuthStateChanged(auth, (user)=>{
     loggedIn = !!user;
-    if(loggedIn){
-      const panel = document.getElementById("loginPanel");
-      if(panel) panel.style.display = "none";
-    }
+    authStateEl.textContent = loggedIn ? "상태: 로그인됨" : "상태: 로그아웃됨";
+    logoutBtn.style.display = loggedIn ? "inline-block" : "none";
+    // ✅ loginPanel은 절대 자동 숨김하지 않음 (사용자가 보기 편하게 유지)
   });
 
   document.getElementById("loginBtn").addEventListener("click", async ()=>{
@@ -462,6 +489,15 @@
       alert("로그인 완료! 메일박스를 눌러 편지를 확인해봐.");
     }catch(e){
       alert("로그인 실패: " + (e?.message || e));
+    }
+  });
+
+  logoutBtn.addEventListener("click", async ()=>{
+    try{
+      await signOut(auth);
+      alert("로그아웃 완료");
+    }catch(e){
+      alert("로그아웃 실패: " + (e?.message || e));
     }
   });
 
@@ -493,7 +529,6 @@
   function startAllLettersRealtime(){
     if(unsubAll) unsubAll();
 
-    // createdAt이 없는 문서가 있을 수 있어서 안전하게 정렬
     const q = query(collection(db,"letters"), orderBy("createdAt","desc"));
 
     unsubAll = onSnapshot(q, (snap)=>{
@@ -509,12 +544,9 @@
         });
       });
 
-      // createdAt null 대비: 한번 더 정렬
       list.sort((a,b)=> (b.createdAtMs||0) - (a.createdAtMs||0));
-
       allLettersCache = list;
 
-      // 스택 화면이면 즉시 갱신
       if(envelopeArea.style.display !== "none"){
         renderEnvelopeStack(allLettersCache);
       }
@@ -523,7 +555,7 @@
     });
   }
 
-  // ===== 메일박스 클릭: 스택 열기 =====
+  // ===== 메일박스 클릭 =====
   mailbox.addEventListener("click", ()=>{
     if(!loggedIn){ showNeedLogin(); return; }
 
@@ -536,7 +568,7 @@
     startAllLettersRealtime();
   });
 
-  // ===== ✉️ 클릭: 편지 열기 =====
+  // ===== ✉️ 클릭 =====
   envelopesEl.addEventListener("click", (e)=>{
     const b = e.target.closest(".envBtn");
     if(!b) return;
@@ -614,5 +646,3 @@
 </script>
 </body>
 </html>
-
-
