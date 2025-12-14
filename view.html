@@ -8,35 +8,260 @@
   <style>
     body{
       margin:0;
-      background: linear-gradient(135deg, #b81d24, #0b6b3a);
-      color:#222;
-      font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
-    }
-    .wrap{
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px 16px 80px;
-    }
-    h1{
-      text-align:center;
+      background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.16), transparent 42%),
+                  linear-gradient(135deg, #b81d24 0%, #0b6b3a 100%);
       color:#fff;
-      margin-bottom:18px;
+      font-family: 'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+      overflow-x:hidden;
     }
-    .login, .letters{
+
+    #snow{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 2;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 80px;
+      text-align:center;
+      position: relative;
+      z-index: 3;
+    }
+
+    h1{ margin:10px 0 6px; }
+    .sub{ font-size:14px; opacity:.85; margin-bottom:12px; }
+
+    .musicBtn{
+      margin: 10px auto 16px;
+      padding:10px 14px;
+      border:0;
+      border-radius:999px;
+      background: rgba(255,255,255,.18);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      backdrop-filter: blur(6px);
+    }
+
+    .stage{
+      position:relative;
+      width:min(520px, 92vw);
+      aspect-ratio:1/1;
+      margin:0 auto;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius:22px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+
+    .tree{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      z-index: 1;
+      filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
+    }
+
+    .treeGlow{
+      position:absolute;
+      inset:0;
+      z-index: 2;
+      pointer-events:none;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.20), transparent 55%);
+      animation: glowPulse 2.4s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes glowPulse{
+      0%{ opacity:.25; transform: scale(1); }
+      50%{ opacity:.65; transform: scale(1.02); }
+      100%{ opacity:.25; transform: scale(1); }
+    }
+
+    .light{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,.95);
+      box-shadow: 0 0 14px rgba(255,255,255,.95);
+      animation: twinkle 1.4s infinite ease-in-out;
+      opacity: .75;
+      z-index: 2;
+    }
+    @keyframes twinkle{
+      0%{ transform: scale(.7); opacity:.35; }
+      50%{ transform: scale(1.3); opacity:1; }
+      100%{ transform: scale(.7); opacity:.35; }
+    }
+
+    .ornament{
+      position:absolute;
+      width:86px;
+      height:86px;
+      border-radius:50%;
+      overflow:hidden;
+      cursor:pointer;
+      z-index: 3;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 12px 24px rgba(0,0,0,.35);
+      border: 3px solid rgba(255,255,255,.9);
       background:#fff;
+      transition: transform .15s ease;
+    }
+    .ornament:hover{ transform: translate(-50%, -50%) scale(1.04); }
+    .ornament img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .hook{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border: 2px solid rgba(255,255,255,.95);
+      background: rgba(0,0,0,.10);
+      top:-14px;
+      left:50%;
+      transform: translateX(-50%);
+      box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    }
+    .string{
+      position:absolute;
+      width:2px;
+      height:22px;
+      background: rgba(255,255,255,.75);
+      top:-22px;
+      left:50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    .note{
+      position:absolute;
+      right:-6px;
+      bottom:-6px;
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      background:#fff;
+      color:#111;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:16px;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+    }
+
+    /* mailbox.png */
+    .mailbox{
+      position:absolute;
+      left:50%;
+      top:86%;
+      transform:translate(-50%,-50%);
+      width:72px;
+      height:72px;
+      border-radius:18px;
+      background: rgba(255,255,255,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index: 6;
+      box-shadow: 0 14px 28px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .mailbox:hover{ transform:translate(-50%,-50%) scale(1.03); }
+    .mailbox img{
+      width:52px;
+      height:52px;
+      object-fit: contain;
+      display:block;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+    }
+
+    /* 모달 */
+    .modalBack{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index: 20;
+    }
+    .modal{
+      width:min(720px, 96vw);
+      background: rgba(255,255,255,.96);
+      color:#222;
       border-radius:18px;
       padding:16px;
-      box-shadow:0 18px 50px rgba(0,0,0,.25);
+      text-align:left;
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
     }
-    input{
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .close{
+      border:0;
+      background:#eee;
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .letters{
+      max-height:360px;
+      overflow:auto;
+      background:#f7f7f7;
+      border-radius:12px;
+      padding:10px;
+      color:#222;
+    }
+    .item{
+      background:#fff;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:8px;
+      font-size:14px;
+    }
+    .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
+    .msg{ white-space: pre-line; line-height: 1.7; }
+
+    /* 로그인 패널 */
+    .loginPanel{
+      width:min(520px, 92vw);
+      margin: 0 auto 14px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:12px;
+      text-align:left;
+      backdrop-filter: blur(8px);
+    }
+    .loginPanel input{
       width:100%;
       padding:10px;
       border-radius:10px;
-      border:1px solid #ccc;
-      margin-bottom:10px;
+      border:1px solid rgba(255,255,255,.22);
+      margin-bottom:8px;
       font-size:14px;
+      box-sizing:border-box;
+      background: rgba(255,255,255,.9);
     }
-    button{
+    .loginPanel button{
       width:100%;
       padding:10px;
       border-radius:999px;
@@ -46,41 +271,86 @@
       font-weight:700;
       cursor:pointer;
     }
-    .item{
-      background:#f7f7f7;
-      border-radius:12px;
-      padding:10px;
-      margin-bottom:10px;
-    }
-    .meta{
+    .loginHint{
       font-size:12px;
-      opacity:.6;
-      margin-bottom:4px;
+      opacity:.85;
+      margin-top:8px;
     }
-    .msg{
-      white-space:pre-line;
-      line-height:1.7;
+
+    .hint{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: .85;
     }
   </style>
 </head>
 
 <body>
-<div class="wrap">
-  <h1>🎄 연지의 편지함 🎄</h1>
+  <canvas id="snow"></canvas>
 
-  <div id="login" class="login">
-    <input id="email" placeholder="이메일">
-    <input id="password" type="password" placeholder="비밀번호">
-    <button id="loginBtn">로그인</button>
+  <div class="wrap">
+    <h1>🎄 연지의 편지함 🎄</h1>
+    <div class="sub">오너먼트를 누르면 편지를 볼 수 있어</div>
+
+    <!-- 로그인 (연지만) -->
+    <div class="loginPanel" id="loginPanel">
+      <input id="email" placeholder="연지 이메일">
+      <input id="password" type="password" placeholder="비밀번호">
+      <button id="loginBtn">로그인하고 편지 보기</button>
+      <div class="loginHint">로그인 후 전체 편지가 보여.</div>
+    </div>
+
+    <button id="musicBtn" class="musicBtn">음악 켜기</button>
+    <audio id="bgm" src="christmas.mp3" loop preload="auto"></audio>
+
+    <div class="stage">
+      <img src="tree.png" class="tree" alt="tree">
+      <div class="treeGlow"></div>
+
+      <div id="mailbox" class="mailbox" title="전체 편지 모아보기">
+        <img src="mailbox.png" alt="mailbox">
+      </div>
+
+      <div class="light" style="left:38%; top:22%; animation-delay:0s;"></div>
+      <div class="light" style="left:58%; top:28%; animation-delay:.35s;"></div>
+      <div class="light" style="left:46%; top:36%; animation-delay:.7s;"></div>
+      <div class="light" style="left:33%; top:48%; animation-delay:1.05s;"></div>
+      <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
+      <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
+
+      <div class="ornament" style="left:50%; top:26%;" data-photo="photo1">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo1.jpg" alt="p1"><div class="note">✉️</div>
+      </div>
+
+      <div class="ornament" style="left:33%; top:56%;" data-photo="photo2">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo2.jpg" alt="p2"><div class="note">✉️</div>
+      </div>
+
+      <div class="ornament" style="left:67%; top:56%;" data-photo="photo3">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo3.jpg" alt="p3"><div class="note">✉️</div>
+      </div>
+    </div>
+
+    <div class="hint">연지야 생일 축하해</div>
   </div>
 
-  <div id="letters" class="letters" style="display:none;"></div>
-</div>
+  <div class="modalBack" id="modal">
+    <div class="modal">
+      <div class="top">
+        <strong id="title"></strong>
+        <button class="close" id="closeBtn">닫기</button>
+      </div>
+      <div class="letters" id="letters"></div>
+    </div>
+  </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
@@ -95,29 +365,54 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const loginBox = document.getElementById("login");
-const lettersBox = document.getElementById("letters");
+function safeText(s){
+  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
 
-document.getElementById("loginBtn").onclick = async ()=>{
+const modal = document.getElementById("modal");
+const closeBtn = document.getElementById("closeBtn");
+const titleEl = document.getElementById("title");
+const lettersEl = document.getElementById("letters");
+
+function openModal(title){
+  titleEl.textContent = title;
+  modal.style.display = "flex";
+}
+function closeModal(){
+  modal.style.display = "none";
+}
+closeBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
+
+function showNeedLogin(){
+  openModal("로그인이 필요해");
+  lettersEl.innerHTML = `<div class="item"><div class="msg">연지 계정으로 로그인하면 전체 편지를 볼 수 있어.</div></div>`;
+}
+
+let loggedIn = false;
+
+// ===== 로그인 =====
+document.getElementById("loginBtn").addEventListener("click", async ()=>{
   try{
-    const email = document.getElementById("email").value;
-    const pw = document.getElementById("password").value;
-
+    const email = document.getElementById("email").value.trim();
+    const pw = document.getElementById("password").value.trim();
     await signInWithEmailAndPassword(auth, email, pw);
 
-    loginBox.style.display = "none";
-    lettersBox.style.display = "block";
-    loadAllLetters();
+    loggedIn = true;
+    document.getElementById("loginPanel").style.display = "none";
+    alert("로그인 완료! 오너먼트를 눌러 편지를 확인해봐.");
 
   }catch(e){
-    alert("로그인 실패");
+    alert("로그인 실패: " + e.message);
   }
-};
+});
 
-async function loadAllLetters(){
-  const snap = await getDocs(collection(db,"letters"));
+// ===== 오너먼트별 편지 읽기 =====
+async function loadLettersByPhoto(photoKey){
+  const q = query(collection(db,"letters"), where("photoKey","==", photoKey));
+  const snap = await getDocs(q);
+
   const list = [];
-
   snap.forEach(d=>{
     const v = d.data();
     list.push({
@@ -128,14 +423,137 @@ async function loadAllLetters(){
   });
 
   list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+  return list;
+}
 
-  lettersBox.innerHTML = list.map(v=>`
+async function loadAllLetters(){
+  const snap = await getDocs(collection(db,"letters"));
+  const list = [];
+  snap.forEach(d=>{
+    const v = d.data();
+    list.push({
+      writer: v.writer || "익명",
+      message: v.message || "",
+      photoKey: v.photoKey || "",
+      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+    });
+  });
+  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+  return list;
+}
+
+function renderList(list){
+  if(list.length === 0){
+    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어.</div></div>`;
+    return;
+  }
+  lettersEl.innerHTML = list.map(v=>`
     <div class="item">
-      <div class="meta">${v.writer}</div>
-      <div class="msg">${v.message}</div>
+      <div class="meta">${safeText(v.writer)}${v.photoKey ? " · " + safeText(v.photoKey) : ""}</div>
+      <div class="msg">${safeText(v.message)}</div>
     </div>
   `).join("");
 }
+
+document.querySelectorAll(".ornament").forEach(o=>{
+  o.addEventListener("click", async ()=>{
+    if(!loggedIn){ showNeedLogin(); return; }
+    const photo = o.dataset.photo;
+    openModal(photo + " 편지");
+    try{
+      const list = await loadLettersByPhoto(photo);
+      renderList(list);
+    }catch(e){
+      lettersEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+    }
+  });
+});
+
+document.getElementById("mailbox").addEventListener("click", async ()=>{
+  if(!loggedIn){ showNeedLogin(); return; }
+  openModal("전체 편지");
+  try{
+    const list = await loadAllLetters();
+    renderList(list);
+  }catch(e){
+    lettersEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+  }
+});
+
+// ===== 음악 토글 =====
+const bgm = document.getElementById("bgm");
+const musicBtn = document.getElementById("musicBtn");
+let playing = false;
+
+musicBtn.addEventListener("click", async () => {
+  try{
+    if(!playing){
+      await bgm.play();
+      playing = true;
+      musicBtn.textContent = "음악 끄기";
+    }else{
+      bgm.pause();
+      playing = false;
+      musicBtn.textContent = "음악 켜기";
+    }
+  }catch(e){
+    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
+  }
+});
+
+// ===== 눈 내리는 효과(Canvas) =====
+const canvas = document.getElementById("snow");
+const ctx = canvas.getContext("2d");
+let W = 0, H = 0;
+
+function resizeSnow(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeSnow);
+resizeSnow();
+
+const flakes = [];
+function rebuildFlakes(){
+  flakes.length = 0;
+  const count = Math.min(160, Math.floor((W * H) / 12000));
+  for(let i=0;i<count;i++){
+    flakes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2.2 + 0.7,
+      vx: Math.random() * 0.6 - 0.3,
+      vy: Math.random() * 1.3 + 0.5,
+      a: Math.random() * 0.55 + 0.25,
+      wob: Math.random() * 3.14
+    });
+  }
+}
+rebuildFlakes();
+window.addEventListener("resize", rebuildFlakes);
+
+function snowTick(){
+  ctx.clearRect(0,0,W,H);
+  for(const f of flakes){
+    f.wob += 0.02;
+    f.x += f.vx + Math.sin(f.wob) * 0.25;
+    f.y += f.vy;
+
+    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
+    if(f.x > W + 10) f.x = -10;
+    if(f.x < -10) f.x = W + 10;
+
+    ctx.globalAlpha = f.a;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(snowTick);
+}
+snowTick();
 </script>
 </body>
 </html>
+
