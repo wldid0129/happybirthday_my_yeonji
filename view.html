@@ -6,6 +6,7 @@
   <title>연지의 편지함 (보기 전용)</title>
 
   <style>
+    /* 작성자 코드의 전체 CSS를 그대로 복사했습니다. */
     body{
       margin:0;
       background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.16), transparent 42%),
@@ -104,7 +105,7 @@
         position:absolute;
         width:78px;
         height:auto;
-        cursor:default; /* 클릭 불가 */
+        cursor:default; 
         z-index: 3;
         transform: translate(-50%, -50%);
         filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
@@ -112,7 +113,7 @@
         pointer-events: none; /* 클릭 이벤트 원천 봉쇄 */
       }
      .ornament:hover{
-        transform: translate(-50%, -50%); /* 호버 시 크기 확대 효과 제거 */
+        transform: translate(-50%, -50%); 
       }
 
      /* 이미지가 장식 그 자체 */
@@ -145,8 +146,8 @@
     }
     .note{
       position:absolute;
-      right:-6px; /* 작성자 코드와 위치 동일하게 수정 */
-      bottom:-6px; /* 작성자 코드와 위치 동일하게 수정 */
+      right:-6px; 
+      bottom:-6px; 
       width:30px;
       height:30px;
       border-radius:50%;
@@ -290,7 +291,7 @@
 
   <div class="wrap">
     <h1>🎄 연지의 편지함 🎄</h1>
-    <div class="sub">로그인 후 메일박스(📮)를 눌러 전체 편지를 볼 수 있어</div>
+        <div class="sub">로그인 후 메일박스(📮)를 눌러 전체 편지를 볼 수 있어</div>
 
         <div class="loginPanel" id="loginPanel">
       <input id="email" placeholder="연지 이메일">
@@ -306,7 +307,7 @@
       <img src="tree.png" class="tree" alt="tree">
       <div class="treeGlow"></div>
 
-            <div id="mailbox" class="mailbox" title="전체 편지 모아보기">
+      <div id="mailbox" class="mailbox" title="전체 편지 모아보기">
         <img src="mailbox.png" alt="mailbox">
       </div>
 
@@ -317,27 +318,33 @@
       <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
       <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
 
-            <div class="ornament" style="left:50%; top:22%;" data-photo="photo1">
+            <div class="ornament" style="left:46%; top:22%;" data-photo="photo1">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo1.png" alt="p1a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:60%; top:47%;" data-photo="photo1">
+      <div class="ornament" style="left:50%; top:44%;" data-photo="photo1">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo2.png" alt="p1b"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:40%; top:47%;" data-photo="photo2">
+      <div class="ornament" style="left:30%; top:44%;" data-photo="photo2">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo3.png" alt="p2a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:30%; top:70%;" data-photo="photo2">
+      <div class="ornament" style="left:20%; top:64%;" data-photo="photo2">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo3.png" alt="p2b"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:50%; top:70%;" data-photo="photo3">
+      <div class="ornament" style="left:40%; top:64%;" data-photo="photo3">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo1.png" alt="p3a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:70%; top:70%;" data-photo="photo3">
+      <div class="ornament" style="left:60%; top:64%;" data-photo="photo3">
+        <div class="string"></div><div class="hook"></div>
         <img src="photo2.png" alt="p3b"><div class="note">✉️</div>
       </div>
     </div>
@@ -353,7 +360,7 @@
       </div>
       <div class="letters" id="letters"></div>
     </div>
-   </div>
+  </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -416,8 +423,7 @@ document.getElementById("loginBtn").addEventListener("click", async ()=>{
     loggedIn = true;
     document.getElementById("loginPanel").style.display = "none";
     
-    // 로그인 성공 시 바로 메일함 열기 (편의성)
-    mailbox.click(); 
+    alert("로그인 완료! 메일박스를 눌러 전체 편지를 확인해봐.");
     
   }catch(e){
     alert("로그인 실패: " + e.message);
@@ -451,12 +457,22 @@ function renderList(list){
     <div class="item">
       <div class="meta">${safeText(v.writer)} (오너먼트: ${safeText(v.photoKey)})</div>
       <div class="msg">${safeText(v.message)}</div>
+      <div class="meta">${v.createdAtMs ? new Date(v.createdAtMs).toLocaleString('ko-KR') : ''}</div>
     </div>
   `).join("");
 }
 
-// 오너먼트 클릭 이벤트 제거: 오로지 메일박스를 통해서만 편지 확인
-// document.querySelectorAll(".ornament").forEach(o=>{ ... }); 
+// ❌ 오너먼트 클릭 이벤트 제거: 오로지 메일박스를 통해서만 편지 확인
+document.querySelectorAll(".ornament").forEach(o=>{
+  o.addEventListener("click", (e)=>{
+    // 오너먼트 클릭 시 아무 일도 일어나지 않도록 막습니다.
+    e.preventDefault();
+    if(!loggedIn){
+      showNeedLogin();
+    }
+  });
+});
+
 
 // ✅ 메일박스 클릭 이벤트 (전체 편지 보기)
 mailbox.addEventListener("click", async ()=>{
