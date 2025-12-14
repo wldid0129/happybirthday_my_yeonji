@@ -491,7 +491,7 @@ document.querySelectorAll(".ornament").forEach(o=>{
     // 남의 편지 목록을 보여주지 않음
     lettersEl.style.display = "block";
     lettersEl.innerHTML = canWrite
-      ? `<div class="item"><div class="msg">여기에 편지를 쓰고 저장하면 내 편지함(📮)에 쌓여.</div></div>`
+      ? `<div class="item"><div class="msg">여기에 편지를 쓰고 저장하면 연지지 편지함(📮)에 쌓여.</div></div>`
       : `<div class="item"><div class="msg">보기 전용 링크야. 편지는 작성할 수 없어.</div></div>`;
 
     envelopeArea.style.display = "none";
@@ -618,10 +618,7 @@ sendBtn.addEventListener("click", async ()=>{
         message,
         writeKey: urlKey
       });
-      // 수정 완료 후 편집 모드 초기화 (수정 저장 제한)
-      editingId = null;
-      sendBtn.textContent = "편지 저장"; // 버튼 텍스트 복구
-      alert("수정 완료. 이제 새로운 편지만 작성할 수 있어.");
+      
     }else{
       await addDoc(collection(db,"letters"),{
         photoKey: currentPhoto,
