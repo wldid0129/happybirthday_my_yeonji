@@ -558,31 +558,69 @@ mailbox.addEventListener("click", async ()=>{
 
 // ✉️ 클릭: 해당 편지 열기(내 글이므로 수정/삭제 가능, 보기전용이면 읽기만)
 envelopesEl.addEventListener("click", (e)=>{
-  const b = e.target.closest(".envBtn");
-  if(!b) return;
+  const b = e.target.closest(".envBtn");
+  if(!b) return;
 
-  const found = mailboxCache.find(v=>v.id === b.dataset.id);
-  if(!found) return;
+  const found = mailboxCache.find(v=>v.id === b.dataset.id);
+  if(!found) return;
 
-  envelopeArea.style.display = "none";
-  lettersEl.style.display = "block";
-  lettersEl.innerHTML = `<div class="item"><div class="meta">${safeText(found.photoKey)}</div><div class="msg">${safeText(found.message)}</div></div>`;
+  envelopeArea.style.display = "none";
+  lettersEl.style.display = "block";
 
-  if(!canWrite){
-    // 보기 전용은 읽기만
-    if(formArea) formArea.style.display = "none";
-    return;
-  }
+  // 수정: 삭제 버튼을 포함한 HTML 구조 생성
+  let letterHtml = `<div class="item">`;
+  if(canWrite){
+    letterHtml += `<div class="itemTop">
+      <div class="meta">${safeText(found.photoKey)}</div>
+      <button class="deleteBtn" data-id="${found.id}">🗑️ 삭제</button>
+    </div>`;
+  }else{
+    letterHtml += `<div class="meta">${safeText(found.photoKey)}</div>`;
+  }
+  letterHtml += `<div class="msg">${safeText(found.message)}</div></div>`;
+  lettersEl.innerHTML = letterHtml;
 
-  // 쓰기 링크면 수정모드로 열기
-  if(formArea) formArea.style.display = "block";
-  currentPhoto = found.photoKey;
-  editingId = found.id;
-  writerEl.value = found.writer;
-  messageEl.value = found.message;
-  sendBtn.textContent = "수정 저장";
+  if(!canWrite){
+    // 보기 전용은 읽기만
+    if(formArea) formArea.style.display = "none";
+    return;
+  }
+
+  // 쓰기 링크면 수정모드로 열기
+  if(formArea) formArea.style.display = "block";
+  currentPhoto = found.photoKey;
+  editingId = found.id;
+  writerEl.value = found.writer;
+  messageEl.value = found.message;
+  sendBtn.textContent = "수정 저장";
 });
 
+
+// ===== 삭제 버튼 이벤트 리스너 추가 (lettersEl 내부에서 발생) =====
+lettersEl.addEventListener("click", async (e)=>{
+  const deleteBtn = e.target.closest(".deleteBtn");
+  if(!deleteBtn || !canWrite) return;
+
+  const letterId = deleteBtn.dataset.id;
+  const confirmMsg = "정말로 이 편지를 삭제하시겠습니까?";
+
+  if(!confirm(confirmMsg)){
+    return;
+  }
+
+  try{
+    // 삭제 실행
+    await deleteDoc(doc(db, "letters", letterId));
+    alert("편지가 성공적으로 삭제되었습니다.");
+
+    // 모달 닫고, 메일함 목록 새로고침을 위해 메일박스 클릭 이벤트 재실행
+    closeModal();
+    mailbox.click(); 
+
+  }catch(error){
+    alert("삭제 실패: " + error.message);
+  }
+});
 // ===== 저장 / 수정 저장 =====
 sendBtn.addEventListener("click", async ()=>{
   if(!canWrite){
