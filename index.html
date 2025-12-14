@@ -571,7 +571,7 @@ envelopesEl.addEventListener("click", (e)=>{
   let letterHtml = `<div class="item">`;
   if(canWrite){
     letterHtml += `<div class="itemTop">
-      <div class="meta">${safeText(found.writer)} (${safeText(found.photoKey)})</div>
+      <div class="meta">${safeText(found.writer)}</div>
       <button class="deleteBtn" data-id="${found.id}">🗑️ 삭제</button>
     </div>`;
   }else{
