@@ -449,7 +449,7 @@ function renderList(list){
   }
   lettersEl.innerHTML = list.map(v=>`
     <div class="item">
-      <div class="meta">${safeText(v.writer)}${v.photoKey ? " · " + safeText(v.photoKey) : ""}</div>
+      <div class="meta">${safeText(v.writer)}</div>
       <div class="msg">${safeText(v.message)}</div>
     </div>
   `).join("");
