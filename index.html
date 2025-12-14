@@ -396,17 +396,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 import {
-  getFirestore, collection, addDoc, query, where, getDocs,
-  serverTimestamp, doc, updateDoc, deleteDoc
+  getFirestore, collection, addDoc, query, where, getDocs,
+  serverTimestamp, doc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
-  authDomain: "yj-birthday.firebaseapp.com",
-  projectId: "yj-birthday",
-  storageBucket: "yj-birthday.firebasestorage.app",
-  messagingSenderId: "664910382832",
-  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
+  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
+  authDomain: "yj-birthday.firebaseapp.com",
+  projectId: "yj-birthday",
+  storageBucket: "yj-birthday.firebasestorage.app",
+  messagingSenderId: "664910382832",
+  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
 };
 
 const WRITE_KEY = "YJ_TREE_2025_9aK3QzT2";
@@ -419,7 +419,7 @@ const db = getFirestore(app);
 await signInAnonymously(auth);
 
 function safeText(s){
-  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
 // ===== 음악 토글 =====
@@ -428,19 +428,19 @@ const musicBtn = document.getElementById("musicBtn");
 let playing = false;
 
 musicBtn.addEventListener("click", async () => {
-  try{
-    if(!playing){
-      await bgm.play();
-      playing = true;
-      musicBtn.textContent = "음악 끄기";
-    }else{
-      bgm.pause();
-      playing = false;
-      musicBtn.textContent = "음악 켜기";
-    }
-  }catch(e){
-    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
-  }
+  try{
+    if(!playing){
+      await bgm.play();
+      playing = true;
+      musicBtn.textContent = "음악 끄기";
+    }else{
+      bgm.pause();
+      playing = false;
+      musicBtn.textContent = "음악 켜기";
+    }
+  }catch(e){
+    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
+  }
 });
 
 // ===== DOM =====
@@ -464,96 +464,96 @@ let editingId = null;
 let mailboxCache = []; // 내 편지 목록 캐시
 
 function openModalBase(title){
-  titleEl.textContent = title;
-  modal.style.display = "flex";
+  titleEl.textContent = title;
+  modal.style.display = "flex";
 }
 function closeModal(){
-  modal.style.display = "none";
+  modal.style.display = "none";
 }
 closeBtn.addEventListener("click", closeModal);
 modal.addEventListener("click", (e)=>{
-  if(e.target === modal) closeModal();
+  if(e.target === modal) closeModal();
 });
 
 // 보기 전용이면 작성/수정/삭제 자체를 막기
 if(formArea && !canWrite){
-  formArea.style.display = "none";
+  formArea.style.display = "none";
 }
 
 // ===== 1) 오너먼트 클릭: 작성만 =====
 document.querySelectorAll(".ornament").forEach(o=>{
-  o.addEventListener("click", ()=>{
-    currentPhoto = o.dataset.photo;
-    editingId = null;
+  o.addEventListener("click", ()=>{
+    currentPhoto = o.dataset.photo;
+    editingId = null;
 
-    openModalBase("편지 쓰기");
+    openModalBase("편지 쓰기");
 
-    // 남의 편지 목록을 보여주지 않음
-    lettersEl.style.display = "block";
-    lettersEl.innerHTML = canWrite
-      ? `<div class="item"><div class="msg">여기에 편지를 쓰고 저장하면 내 편지함(📮)에 쌓여.</div></div>`
-      : `<div class="item"><div class="msg">보기 전용 링크야. 편지는 작성할 수 없어.</div></div>`;
+    // 남의 편지 목록을 보여주지 않음
+    lettersEl.style.display = "block";
+    lettersEl.innerHTML = canWrite
+      ? `<div class="item"><div class="msg">여기에 편지를 쓰고 저장하면 내 편지함(📮)에 쌓여.</div></div>`
+      : `<div class="item"><div class="msg">보기 전용 링크야. 편지는 작성할 수 없어.</div></div>`;
 
-    envelopeArea.style.display = "none";
+    envelopeArea.style.display = "none";
 
-    if(canWrite){
-      formArea.style.display = "block";
-      sendBtn.textContent = "편지 저장";
-      writerEl.value = writerEl.value || "";
-      messageEl.value = "";
-      messageEl.focus();
-    }else{
-      formArea.style.display = "none";
-    }
-  });
+    if(canWrite){
+      formArea.style.display = "block";
+      sendBtn.textContent = "편지 저장";
+      writerEl.value = writerEl.value || "";
+      messageEl.value = "";
+      messageEl.focus();
+    }else{
+      formArea.style.display = "none";
+    }
+  });
 });
 
 // ===== 2) 메일박스 클릭: 내 편지 목록(✉️ 스택) =====
 async function loadMyLetters(){
-  const q = query(collection(db,"letters"), where("authorUid","==", auth.currentUser.uid));
-  const snap = await getDocs(q);
+  const q = query(collection(db,"letters"), where("authorUid","==", auth.currentUser.uid));
+  const snap = await getDocs(q);
 
-  const list = [];
-  snap.forEach(d=>{
-    const v = d.data();
-    list.push({
-      id: d.id,
-      writer: v.writer || "익명",
-      message: v.message || "",
-      photoKey: v.photoKey || "",
-      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
-    });
-  });
+  const list = [];
+  snap.forEach(d=>{
+    const v = d.data();
+    list.push({
+      id: d.id,
+      writer: v.writer || "익명",
+      message: v.message || "",
+      photoKey: v.photoKey || "",
+      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+    });
+  });
 
-  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
-  return list;
+  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+  return list;
 }
 
 function renderEnvelopeStack(list){
-  if(list.length === 0){
-    envelopesEl.innerHTML = `<div class="item"><div class="msg">아직 내가 쓴 편지가 없어.</div></div>`;
-    return;
-  }
+  if(list.length === 0){
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">아직 내가 쓴 편지가 없어.</div></div>`;
+    return;
+  }
 
-  envelopesEl.innerHTML = list.map(x=>`
-    <button class="envBtn" data-id="${x.id}" title="${safeText(x.photoKey)} 편지">✉️</button>
-  `).join("");
+  envelopesEl.innerHTML = list.map(x=>`
+    <button class="envBtn" data-id="${x.id}" title="${safeText(x.photoKey)} 편지">✉️</button>
+  `).join("");
 }
 
 mailbox.addEventListener("click", async ()=>{
-  openModalBase("내 편지함");
+  openModalBase("내 편지함");
 
-  // 편지함 모드
-  lettersEl.style.display = "none";
-  envelopeArea.style.display = "block";
-  if(formArea) formArea.style.display = "none";
+  // 편지함 모드
+  lettersEl.style.display = "none";
+  envelopeArea.style.display = "block";
+  if(formArea) formArea.style.display = "none";
 
-  try{
-    mailboxCache = await loadMyLetters();
-    renderEnvelopeStack(mailboxCache);
-  }catch(e){
-    envelopesEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
-  }
+  try{
+    mailboxCache = await loadMyLetters();
+    renderEnvelopeStack(mailboxCache);
+  }catch(e){
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+  }
 });
 
 // ✉️ 클릭: 해당 편지 열기(내 글이므로 수정/삭제 가능, 보기전용이면 읽기만)
@@ -567,15 +567,15 @@ envelopesEl.addEventListener("click", (e)=>{
   envelopeArea.style.display = "none";
   lettersEl.style.display = "block";
 
-  // 수정: 삭제 버튼을 포함한 HTML 구조 생성
+  // 수정: meta에 photoKey 대신 writer 표시
   let letterHtml = `<div class="item">`;
   if(canWrite){
     letterHtml += `<div class="itemTop">
-      <div class="meta">${safeText(found.photoKey)}</div>
+      <div class="meta">${safeText(found.writer)} (${safeText(found.photoKey)})</div>
       <button class="deleteBtn" data-id="${found.id}">🗑️ 삭제</button>
     </div>`;
   }else{
-    letterHtml += `<div class="meta">${safeText(found.photoKey)}</div>`;
+    letterHtml += `<div class="meta">${safeText(found.writer)} (${safeText(found.photoKey)})</div>`;
   }
   letterHtml += `<div class="msg">${safeText(found.message)}</div></div>`;
   lettersEl.innerHTML = letterHtml;
@@ -595,8 +595,55 @@ envelopesEl.addEventListener("click", (e)=>{
   sendBtn.textContent = "수정 저장";
 });
 
+// ===== 저장 / 수정 저장 =====
+sendBtn.addEventListener("click", async ()=>{
+  if(!canWrite){
+    alert("보기 전용 링크야. 쓰기 링크(?k=...)로 접속해야 해.");
+    return;
+  }
 
-// ===== 삭제 버튼 이벤트 리스너 추가 (lettersEl 내부에서 발생) =====
+  const writer = writerEl.value.trim() || "익명";
+  const message = messageEl.value.trim();
+  if(message.length < 2){
+    alert("편지를 2글자 이상 적어줘");
+    return;
+  }
+
+  sendBtn.disabled = true;
+
+  try{
+    if(editingId){
+      await updateDoc(doc(db,"letters", editingId), {
+        writer,
+        message,
+        writeKey: urlKey
+      });
+      // 수정 완료 후 편집 모드 초기화 (수정 저장 제한)
+      editingId = null;
+      sendBtn.textContent = "편지 저장"; // 버튼 텍스트 복구
+      alert("수정 완료. 이제 새로운 편지만 작성할 수 있어.");
+    }else{
+      await addDoc(collection(db,"letters"),{
+        photoKey: currentPhoto,
+        writer,
+        message,
+        authorUid: auth.currentUser.uid,
+        writeKey: urlKey,
+        createdAt: serverTimestamp()
+      });
+      alert("저장 완료. 연지 편지함(📮)에 쌓였어.");
+    }
+
+    messageEl.value = "";
+
+  }catch(e){
+    alert("저장 실패: " + e.message);
+  }finally{
+    sendBtn.disabled = false;
+  }
+});
+
+// ===== 삭제 로직 (lettersEl 내부에서 발생) =====
 lettersEl.addEventListener("click", async (e)=>{
   const deleteBtn = e.target.closest(".deleteBtn");
   if(!deleteBtn || !canWrite) return;
@@ -621,56 +668,6 @@ lettersEl.addEventListener("click", async (e)=>{
     alert("삭제 실패: " + error.message);
   }
 });
-// ===== 저장 / 수정 저장 =====
-sendBtn.addEventListener("click", async ()=>{
-  if(!canWrite){
-    alert("보기 전용 링크야. 쓰기 링크(?k=...)로 접속해야 해.");
-    return;
-  }
-
-  const writer = writerEl.value.trim() || "익명";
-  const message = messageEl.value.trim();
-  if(message.length < 2){
-    alert("편지를 2글자 이상 적어줘");
-    return;
-  }
-
-  sendBtn.disabled = true;
-
-  try{
-    if(editingId){
-      await updateDoc(doc(db,"letters", editingId), {
-        writer,
-        message,
-        writeKey: urlKey
-      });
-      editingId = null;
-      sendBtn.textContent = "편지 저장";
-      alert("수정 완료");
-    }else{
-      await addDoc(collection(db,"letters"),{
-        photoKey: currentPhoto,
-        writer,
-        message,
-        authorUid: auth.currentUser.uid,
-        writeKey: urlKey,
-        createdAt: serverTimestamp()
-      });
-      alert("저장 완료. 내 편지함(📮)에 쌓였어.");
-    }
-
-    messageEl.value = "";
-
-  }catch(e){
-    alert("저장 실패: " + e.message);
-  }finally{
-    sendBtn.disabled = false;
-  }
-});
-
-// ===== 삭제(메일박스에서 열린 편지만) =====
-// 메일박스 기능에서 “삭제 버튼”도 원하면, 간단히 confirm 후 deleteDoc 호출하면 됨.
-// 지금은 연동만 최소로 하고, 필요하면 내가 UI까지 깔끔하게 붙여줄게.
 
 // ===== 눈 내리는 효과(Canvas) =====
 const canvas = document.getElementById("snow");
@@ -679,56 +676,52 @@ const ctx = canvas.getContext("2d");
 let W = 0, H = 0;
 
 function resizeSnow(){
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resizeSnow);
 resizeSnow();
 
 const flakes = [];
 function rebuildFlakes(){
-  flakes.length = 0;
-  const count = Math.min(160, Math.floor((W * H) / 12000));
-  for(let i=0;i<count;i++){
-    flakes.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 2.2 + 0.7,
-      vx: Math.random() * 0.6 - 0.3,
-      vy: Math.random() * 1.3 + 0.5,
-      a: Math.random() * 0.55 + 0.25,
-      wob: Math.random() * 3.14
-    });
-  }
+  flakes.length = 0;
+  const count = Math.min(160, Math.floor((W * H) / 12000));
+  for(let i=0;i<count;i++){
+    flakes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2.2 + 0.7,
+      vx: Math.random() * 0.6 - 0.3,
+      vy: Math.random() * 1.3 + 0.5,
+      a: Math.random() * 0.55 + 0.25,
+      wob: Math.random() * 3.14
+    });
+  }
 }
 rebuildFlakes();
 window.addEventListener("resize", rebuildFlakes);
 
 function snowTick(){
-  ctx.clearRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);
 
-  for(const f of flakes){
-    f.wob += 0.02;
-    f.x += f.vx + Math.sin(f.wob) * 0.25;
-    f.y += f.vy;
+  for(const f of flakes){
+    f.wob += 0.02;
+    f.x += f.vx + Math.sin(f.wob) * 0.25;
+    f.y += f.vy;
 
-    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
-    if(f.x > W + 10) f.x = -10;
-    if(f.x < -10) f.x = W + 10;
+    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
+    if(f.x > W + 10) f.x = -10;
+    if(f.x < -10) f.x = W + 10;
 
-    ctx.globalAlpha = f.a;
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
-    ctx.fill();
-  }
+    ctx.globalAlpha = f.a;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+  }
 
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(snowTick);
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(snowTick);
 }
 snowTick();
 </script>
-</body>
-</html>
-
-
