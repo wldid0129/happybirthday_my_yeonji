@@ -205,6 +205,25 @@
     .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
     .msg{ white-space: pre-line; line-height: 1.7; }
 
+    .itemTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.deleteBtn{
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:16px;
+  opacity:.5;
+}
+
+.deleteBtn:hover{
+  opacity:1;
+}
+
+
     .editBtn{
     margin-top:8px;
     border:0;
@@ -306,7 +325,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/fireba
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 import {
   getFirestore, collection, addDoc, query, where, getDocs,
-  serverTimestamp, doc, updateDoc
+  serverTimestamp, doc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -406,12 +425,22 @@ function renderLetters(list){
   lettersEl.innerHTML = list.map(v=>{
     const canEditMine = canWrite && v.authorUid === myUid;
     return `
-      <div class="item">
-        <div class="meta">${safeText(v.writer)}</div>
-        <div class="msg">${safeText(v.message)}</div>
-        ${canEditMine ? `<button class="editBtn" data-id="${v.id}">수정</button>` : ``}
-      </div>
-    `;
+  <div class="item">
+    <div class="itemTop">
+      <div class="meta">${safeText(v.writer)}</div>
+      ${canEditMine ? `
+        <button class="deleteBtn" data-id="${v.id}" title="삭제">🗑️</button>
+      ` : ``}
+    </div>
+
+    <div class="msg">${safeText(v.message)}</div>
+
+    ${canEditMine ? `
+      <button class="editBtn" data-id="${v.id}">수정</button>
+    ` : ``}
+  </div>
+`;
+
   }).join("");
 }
 
@@ -431,6 +460,25 @@ lettersEl.addEventListener("click", (e)=>{
   sendBtn.textContent = "수정 저장";
   messageEl.focus();
 });
+
+lettersEl.addEventListener("click", async (e)=>{
+  const delBtn = e.target.closest(".deleteBtn");
+  if(!delBtn) return;
+
+  if(!canWrite) return;
+
+  const id = delBtn.dataset.id;
+  const ok = confirm("이 편지를 삭제할까?");
+  if(!ok) return;
+
+  try{
+    await deleteDoc(doc(db, "letters", id));
+    await loadLetters();
+  }catch(err){
+    alert("삭제 실패: " + err.message);
+  }
+});
+
 
 // 편지 불러오기: orderBy 제거(인덱스 없이 동작) + JS에서 정렬
 async function loadLetters(){
