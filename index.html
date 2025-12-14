@@ -15,7 +15,6 @@
       overflow-x:hidden;
     }
 
-    /* 눈 캔버스 */
     #snow{
       position:fixed;
       inset:0;
@@ -47,7 +46,6 @@
       backdrop-filter: blur(6px);
     }
 
-    /* 트리 무대: 정방향(1:1) */
     .stage{
       position:relative;
       width:min(520px, 92vw);
@@ -70,7 +68,6 @@
       filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
     }
 
-    /* 반짝이 전구 */
     .light{
       position:absolute;
       width:10px;
@@ -88,25 +85,21 @@
       100%{ transform: scale(.7); opacity:.35; }
     }
 
-    /* 트리 전체 은은한 반짝 */
-.treeGlow{
-  position:absolute;
-  inset:0;
-  z-index: 2;
-  pointer-events:none;
-  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.20), transparent 55%);
-  animation: glowPulse 2.4s ease-in-out infinite;
-  mix-blend-mode: screen;
-}
+    .treeGlow{
+      position:absolute;
+      inset:0;
+      z-index: 2;
+      pointer-events:none;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.20), transparent 55%);
+      animation: glowPulse 2.4s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes glowPulse{
+      0%{ opacity:.25; transform: scale(1); }
+      50%{ opacity:.65; transform: scale(1.02); }
+      100%{ opacity:.25; transform: scale(1); }
+    }
 
-@keyframes glowPulse{
-  0%{ opacity:.25; transform: scale(1); }
-  50%{ opacity:.65; transform: scale(1.02); }
-  100%{ opacity:.25; transform: scale(1); }
-}
-
-    
-    /* 오너먼트(사진) */
     .ornament{
       position:absolute;
       width:86px;
@@ -131,7 +124,6 @@
       display:block;
     }
 
-    /* 고리(오너먼트 느낌) */
     .hook{
       position:absolute;
       width:18px;
@@ -155,7 +147,6 @@
       border-radius: 2px;
     }
 
-    /* 편지 아이콘 배지 */
     .note{
       position:absolute;
       right:-6px;
@@ -172,7 +163,35 @@
       box-shadow:0 6px 14px rgba(0,0,0,.25);
     }
 
-    /* 모달 */
+    /* 메일박스(mailbox.png) */
+    .mailbox{
+      position:absolute;
+      left:50%;
+      top:86%;
+      transform:translate(-50%,-50%);
+      width:72px;
+      height:72px;
+      border-radius:18px;
+      background: rgba(255,255,255,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index: 6;
+      box-shadow: 0 14px 28px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .mailbox:hover{ transform:translate(-50%,-50%) scale(1.03); }
+    .mailbox img{
+      width:52px;
+      height:52px;
+      object-fit: contain;
+      display:block;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+    }
+
     .modalBack{
       position:fixed;
       inset:0;
@@ -205,13 +224,16 @@
       border-radius:8px;
       cursor:pointer;
     }
+
+    /* 오너먼트 눌렀을 때: 안내 메시지 영역 */
     .letters{
-      max-height:280px;
+      max-height:180px;
       overflow:auto;
       background:#f7f7f7;
       border-radius:12px;
       padding:10px;
       margin-bottom:10px;
+      color:#222;
     }
     .item{
       background:#fff;
@@ -224,31 +246,46 @@
     .msg{ white-space: pre-line; line-height: 1.7; }
 
     .itemTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.deleteBtn{
-  border:0;
-  background:transparent;
-  cursor:pointer;
-  font-size:16px;
-  opacity:.5;
-}
-
-.deleteBtn:hover{
-  opacity:1;
-}
-
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .deleteBtn{
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      font-size:16px;
+      opacity:.55;
+    }
+    .deleteBtn:hover{ opacity:1; }
 
     .editBtn{
-    margin-top:8px;
-    border:0;
-    padding:7px 10px;
-    border-radius:10px;
-    cursor:pointer;
-    background:#eee;
+      margin-top:8px;
+      border:0;
+      padding:7px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      background:#eee;
+    }
+
+    /* 편지 아이콘(스택) */
+    .envelopes{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .envBtn{
+      width:52px;
+      height:52px;
+      border-radius:14px;
+      border:0;
+      cursor:pointer;
+      background:#fff;
+      box-shadow: 0 10px 22px rgba(0,0,0,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
     }
 
     textarea,input{
@@ -284,7 +321,7 @@
 
   <div class="wrap">
     <h1>🎄 연지의 트리 편지함 🎄</h1>
-    <div class="sub">오너먼트를 눌러서 편지를 확인해줘!</div>
+    <div class="sub">오너먼트를 눌러서 편지를 써줘</div>
 
     <button id="musicBtn" class="musicBtn">음악 켜기</button>
     <audio id="bgm" src="christmas.mp3" loop preload="auto"></audio>
@@ -293,8 +330,11 @@
       <img src="tree.png" class="tree" alt="tree">
       <div class="treeGlow"></div>
 
+      <!-- mailbox.png 사용 -->
+      <div id="mailbox" class="mailbox" title="내 편지함">
+        <img src="mailbox.png" alt="mailbox">
+      </div>
 
-      <!-- 전구(트리 위에 예쁘게) -->
       <div class="light" style="left:38%; top:22%; animation-delay:0s;"></div>
       <div class="light" style="left:58%; top:28%; animation-delay:.35s;"></div>
       <div class="light" style="left:46%; top:36%; animation-delay:.7s;"></div>
@@ -302,7 +342,6 @@
       <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
       <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
 
-      <!-- 오너먼트 위치(트리 정방향 기준) -->
       <div class="ornament" style="left:50%; top:26%;" data-photo="photo1">
         <div class="string"></div><div class="hook"></div>
         <img src="photo1.jpg" alt="p1">
@@ -322,22 +361,29 @@
       </div>
     </div>
 
-    <div class="hint"> 연지야 생일 축하해 </div>
+    <div class="hint">연지야 생일 축하해</div>
   </div>
 
+  <!-- 모달 구조(정상적으로 닫힘) -->
   <div class="modalBack" id="modal">
     <div class="modal">
       <div class="top">
         <strong id="title"></strong>
         <button class="close" id="closeBtn">닫기</button>
       </div>
+
       <div class="letters" id="letters"></div>
-      <div id="formArea">
-      <input id="writer" placeholder="이름">
-      <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
-      <button class="send" id="send">편지 남기기</button>
+
+      <div id="envelopeArea" style="display:none;">
+        <div class="envelopes" id="envelopes"></div>
       </div>
 
+      <div id="formArea">
+        <input id="writer" placeholder="이름">
+        <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
+        <button class="send" id="send">편지 저장</button>
+      </div>
+    </div>
   </div>
 
 <script type="module">
@@ -366,6 +412,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 await signInAnonymously(auth);
 
+function safeText(s){
+  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
 // ===== 음악 토글 =====
 const bgm = document.getElementById("bgm");
 const musicBtn = document.getElementById("musicBtn");
@@ -387,40 +437,30 @@ musicBtn.addEventListener("click", async () => {
   }
 });
 
-// ===== 모달/편지 =====
+// ===== DOM =====
 const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("closeBtn");
-const lettersEl = document.getElementById("letters");
 const titleEl = document.getElementById("title");
-const formArea = document.getElementById("formArea"); // 없으면 아래 줄 지워도 됨
+const lettersEl = document.getElementById("letters");
+
+const envelopeArea = document.getElementById("envelopeArea");
+const envelopesEl = document.getElementById("envelopes");
+
+const formArea = document.getElementById("formArea");
 const writerEl = document.getElementById("writer");
 const messageEl = document.getElementById("message");
 const sendBtn = document.getElementById("send");
 
+const mailbox = document.getElementById("mailbox");
+
 let currentPhoto = "";
 let editingId = null;
+let mailboxCache = []; // 내 편지 목록 캐시
 
-// 보기전용이면 폼 숨기기(너가 원하는 정책)
-if(formArea && !canWrite){
-  formArea.style.display = "none";
-}
-
-// 오너먼트 클릭 → 모달 열기
-document.querySelectorAll(".ornament").forEach(o=>{
-  o.addEventListener("click", ()=>openModal(o.dataset.photo));
-});
-
-function openModal(photo){
-  currentPhoto = photo;
-  titleEl.textContent = photo + " 편지";
+function openModalBase(title){
+  titleEl.textContent = title;
   modal.style.display = "flex";
-
-  editingId = null;
-  if(canWrite) sendBtn.textContent = "편지 남기기";
-
-  loadLetters();
 }
-
 function closeModal(){
   modal.style.display = "none";
 }
@@ -429,108 +469,115 @@ modal.addEventListener("click", (e)=>{
   if(e.target === modal) closeModal();
 });
 
-function safeText(s){
-  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+// 보기 전용이면 작성/수정/삭제 자체를 막기
+if(formArea && !canWrite){
+  formArea.style.display = "none";
 }
 
-// 목록 렌더
-function renderLetters(list){
+// ===== 1) 오너먼트 클릭: 작성만 =====
+document.querySelectorAll(".ornament").forEach(o=>{
+  o.addEventListener("click", ()=>{
+    currentPhoto = o.dataset.photo;
+    editingId = null;
+
+    openModalBase("편지 쓰기");
+
+    // 남의 편지 목록을 보여주지 않음
+    lettersEl.style.display = "block";
+    lettersEl.innerHTML = canWrite
+      ? `<div class="item"><div class="msg">여기에 편지를 쓰고 저장하면 내 편지함(📮)에 쌓여.</div></div>`
+      : `<div class="item"><div class="msg">보기 전용 링크야. 편지는 작성할 수 없어.</div></div>`;
+
+    envelopeArea.style.display = "none";
+
+    if(canWrite){
+      formArea.style.display = "block";
+      sendBtn.textContent = "편지 저장";
+      writerEl.value = writerEl.value || "";
+      messageEl.value = "";
+      messageEl.focus();
+    }else{
+      formArea.style.display = "none";
+    }
+  });
+});
+
+// ===== 2) 메일박스 클릭: 내 편지 목록(✉️ 스택) =====
+async function loadMyLetters(){
+  const q = query(collection(db,"letters"), where("authorUid","==", auth.currentUser.uid));
+  const snap = await getDocs(q);
+
+  const list = [];
+  snap.forEach(d=>{
+    const v = d.data();
+    list.push({
+      id: d.id,
+      writer: v.writer || "익명",
+      message: v.message || "",
+      photoKey: v.photoKey || "",
+      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+    });
+  });
+
+  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+  return list;
+}
+
+function renderEnvelopeStack(list){
   if(list.length === 0){
-    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어.</div></div>`;
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">아직 내가 쓴 편지가 없어.</div></div>`;
     return;
   }
 
-  const myUid = auth.currentUser.uid;
-
-  lettersEl.innerHTML = list.map(v=>{
-    const canEditMine = canWrite && v.authorUid === myUid;
-    return `
-  <div class="item">
-    <div class="itemTop">
-      <div class="meta">${safeText(v.writer)}</div>
-      ${canEditMine ? `
-        <button class="deleteBtn" data-id="${v.id}" title="삭제">🗑️</button>
-      ` : ``}
-    </div>
-
-    <div class="msg">${safeText(v.message)}</div>
-
-    ${canEditMine ? `
-      <button class="editBtn" data-id="${v.id}">수정</button>
-    ` : ``}
-  </div>
-`;
-
-  }).join("");
+  envelopesEl.innerHTML = list.map(x=>`
+    <button class="envBtn" data-id="${x.id}" title="${safeText(x.photoKey)} 편지">✉️</button>
+  `).join("");
 }
 
-// 수정 버튼 클릭 → textarea 채우기
-lettersEl.addEventListener("click", (e)=>{
-  const btn = e.target.closest(".editBtn");
-  if(!btn) return;
-  if(!canWrite) return;
+mailbox.addEventListener("click", async ()=>{
+  openModalBase("내 편지함");
 
-  const item = btn.closest(".item");
-  const meta = item.querySelector(".meta")?.textContent || "익명";
-  const msg  = item.querySelector(".msg")?.textContent || "";
-
-  editingId = btn.dataset.id;
-  writerEl.value = meta.trim();
-  messageEl.value = msg.trim();
-  sendBtn.textContent = "수정 저장";
-  messageEl.focus();
-});
-
-lettersEl.addEventListener("click", async (e)=>{
-  const delBtn = e.target.closest(".deleteBtn");
-  if(!delBtn) return;
-
-  if(!canWrite) return;
-
-  const id = delBtn.dataset.id;
-  const ok = confirm("이 편지를 삭제할까?");
-  if(!ok) return;
+  // 편지함 모드
+  lettersEl.style.display = "none";
+  envelopeArea.style.display = "block";
+  if(formArea) formArea.style.display = "none";
 
   try{
-    await deleteDoc(doc(db, "letters", id));
-    await loadLetters();
-  }catch(err){
-    alert("삭제 실패: " + err.message);
-  }
-});
-
-
-// 편지 불러오기: orderBy 제거(인덱스 없이 동작) + JS에서 정렬
-async function loadLetters(){
-  try{
-    const q = query(
-      collection(db,"letters"),
-      where("photoKey","==",currentPhoto)
-    );
-
-    const snap = await getDocs(q);
-    const list = [];
-    snap.forEach(d=>{
-      const v = d.data();
-      list.push({
-        id: d.id,
-        writer: v.writer || "익명",
-        message: v.message || "",
-        authorUid: v.authorUid || "",
-        createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
-      });
-    });
-
-    // 최신순 정렬
-    list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
-    renderLetters(list);
-
+    mailboxCache = await loadMyLetters();
+    renderEnvelopeStack(mailboxCache);
   }catch(e){
-    lettersEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
   }
-}
+});
 
-// 저장 / 수정 저장
+// ✉️ 클릭: 해당 편지 열기(내 글이므로 수정/삭제 가능, 보기전용이면 읽기만)
+envelopesEl.addEventListener("click", (e)=>{
+  const b = e.target.closest(".envBtn");
+  if(!b) return;
+
+  const found = mailboxCache.find(v=>v.id === b.dataset.id);
+  if(!found) return;
+
+  envelopeArea.style.display = "none";
+  lettersEl.style.display = "block";
+  lettersEl.innerHTML = `<div class="item"><div class="meta">${safeText(found.photoKey)}</div><div class="msg">${safeText(found.message)}</div></div>`;
+
+  if(!canWrite){
+    // 보기 전용은 읽기만
+    if(formArea) formArea.style.display = "none";
+    return;
+  }
+
+  // 쓰기 링크면 수정모드로 열기
+  if(formArea) formArea.style.display = "block";
+  currentPhoto = found.photoKey;
+  editingId = found.id;
+  writerEl.value = found.writer;
+  messageEl.value = found.message;
+  sendBtn.textContent = "수정 저장";
+});
+
+// ===== 저장 / 수정 저장 =====
 sendBtn.addEventListener("click", async ()=>{
   if(!canWrite){
     alert("보기 전용 링크야. 쓰기 링크(?k=...)로 접속해야 해.");
@@ -551,23 +598,24 @@ sendBtn.addEventListener("click", async ()=>{
       await updateDoc(doc(db,"letters", editingId), {
         writer,
         message,
-        writeKey: urlKey // Rules 통과용
+        writeKey: urlKey
       });
       editingId = null;
-      sendBtn.textContent = "편지 남기기";
+      sendBtn.textContent = "편지 저장";
+      alert("수정 완료");
     }else{
       await addDoc(collection(db,"letters"),{
         photoKey: currentPhoto,
         writer,
         message,
-        authorUid: auth.currentUser.uid, // 내 글만 수정 가능하도록 저장
-        writeKey: urlKey,                // Rules 통과용
+        authorUid: auth.currentUser.uid,
+        writeKey: urlKey,
         createdAt: serverTimestamp()
       });
+      alert("저장 완료. 내 편지함(📮)에 쌓였어.");
     }
 
     messageEl.value = "";
-    await loadLetters();
 
   }catch(e){
     alert("저장 실패: " + e.message);
@@ -576,7 +624,11 @@ sendBtn.addEventListener("click", async ()=>{
   }
 });
 
-  // ===== 눈 내리는 효과(Canvas) =====
+// ===== 삭제(메일박스에서 열린 편지만) =====
+// 메일박스 기능에서 “삭제 버튼”도 원하면, 간단히 confirm 후 deleteDoc 호출하면 됨.
+// 지금은 연동만 최소로 하고, 필요하면 내가 UI까지 깔끔하게 붙여줄게.
+
+// ===== 눈 내리는 효과(Canvas) =====
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
@@ -590,21 +642,23 @@ window.addEventListener("resize", resizeSnow);
 resizeSnow();
 
 const flakes = [];
-const FLAKE_COUNT = Math.min(160, Math.floor((W * H) / 12000));
-
-function newFlake(){
-  return {
-    x: Math.random() * W,
-    y: Math.random() * H,
-    r: Math.random() * 2.2 + 0.7,
-    vx: Math.random() * 0.6 - 0.3,
-    vy: Math.random() * 1.3 + 0.5,
-    a: Math.random() * 0.55 + 0.25,
-    wob: Math.random() * 3.14
-  };
+function rebuildFlakes(){
+  flakes.length = 0;
+  const count = Math.min(160, Math.floor((W * H) / 12000));
+  for(let i=0;i<count;i++){
+    flakes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2.2 + 0.7,
+      vx: Math.random() * 0.6 - 0.3,
+      vy: Math.random() * 1.3 + 0.5,
+      a: Math.random() * 0.55 + 0.25,
+      wob: Math.random() * 3.14
+    });
+  }
 }
-
-for(let i=0;i<FLAKE_COUNT;i++) flakes.push(newFlake());
+rebuildFlakes();
+window.addEventListener("resize", rebuildFlakes);
 
 function snowTick(){
   ctx.clearRect(0,0,W,H);
@@ -629,6 +683,8 @@ function snowTick(){
   requestAnimationFrame(snowTick);
 }
 snowTick();
-
 </script>
+</body>
+</html>
+
 
