@@ -6,6 +6,27 @@
   <title>연지의 크리스마스 트리</title>
 
   <style>
+    .light{
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 0 14px rgba(255,255,255,.9);
+  animation: twinkle 1.4s infinite ease-in-out;
+  opacity: .6;
+}
+@keyframes twinkle{
+  0%{ transform: scale(.7); opacity:.35; }
+  50%{ transform: scale(1.2); opacity:1; }
+  100%{ transform: scale(.7); opacity:.35; }
+}
+.light:nth-child(1){ animation-delay: .0s; }
+.light:nth-child(2){ animation-delay: .4s; }
+.light:nth-child(3){ animation-delay: .8s; }
+.light:nth-child(4){ animation-delay: 1.2s; }
+.light:nth-child(5){ animation-delay: .6s; }
+
     body{
       margin:0;
       background: linear-gradient(180deg, #fff7cc, #ffefad);
@@ -39,6 +60,13 @@
       object-fit:contain;
     }
 
+    <div class="light" style="left:32%; top:22%;"></div>
+<div class="light" style="left:58%; top:28%;"></div>
+<div class="light" style="left:44%; top:40%;"></div>
+<div class="light" style="left:28%; top:52%;"></div>
+<div class="light" style="left:62%; top:58%;"></div>
+
+    
     .ornament{
       position:absolute;
       width:90px;
