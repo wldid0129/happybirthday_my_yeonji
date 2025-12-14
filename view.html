@@ -68,6 +68,16 @@
       filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
     }
 
+    .backBtn{
+  margin-top:8px;
+  border:0;
+  padding:7px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  background:#eee;
+}
+
+    
     .light{
       position:absolute;
       width:10px;
@@ -486,9 +496,11 @@ function renderOneLetter(x){
       <div class="meta">${safeText(x.writer)}</div>
       <div class="msg">${safeText(x.message)}</div>
       <div class="meta">${x.createdAtMs ? new Date(x.createdAtMs).toLocaleString('ko-KR') : ''}</div>
+      <button class="backBtn" id="backToStack">⬅️ 편지 목록(✉️)으로</button>
     </div>
   `;
 }
+
 
 /* ===== 메일박스 클릭: 스택만 보여주기 ===== */
 mailbox.addEventListener("click", async ()=>{
@@ -514,6 +526,15 @@ envelopesEl.addEventListener("click", (e)=>{
   const b = e.target.closest(".envBtn");
   if(!b) return;
 
+  lettersEl.addEventListener("click", (e)=>{
+  if(!e.target.closest("#backToStack")) return;
+
+  // 스택으로 복귀
+  lettersEl.style.display = "none";
+  envelopeArea.style.display = "block";
+});
+
+  
   const found = allLettersCache.find(v=>v.id === b.dataset.id);
   if(!found) return;
 
