@@ -104,15 +104,15 @@
         position:absolute;
         width:78px;
         height:auto;
-        cursor:default; /* 커서 변경 */
+        cursor:default; /* 클릭 불가 */
         z-index: 3;
         transform: translate(-50%, -50%);
         filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
-        transition: transform .15s ease;
-        pointer-events: none; /* 클릭 이벤트 제거 */
+        transition: none; /* 호버 효과 제거 */
+        pointer-events: none; /* 클릭 이벤트 원천 봉쇄 */
       }
      .ornament:hover{
-        transform: translate(-50%, -50%); /* 호버 효과 제거 */
+        transform: translate(-50%, -50%); /* 호버 시 크기 확대 효과 제거 */
       }
 
      /* 이미지가 장식 그 자체 */
@@ -145,8 +145,8 @@
     }
     .note{
       position:absolute;
-      right:-6px;
-      bottom:-6px;
+      right:-6px; /* 작성자 코드와 위치 동일하게 수정 */
+      bottom:-6px; /* 작성자 코드와 위치 동일하게 수정 */
       width:30px;
       height:30px;
       border-radius:50%;
@@ -317,33 +317,27 @@
       <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
       <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
 
-            <div class="ornament" style="left:46%; top:22%;" data-photo="photo1">
-        <div class="string"></div><div class="hook"></div>
+            <div class="ornament" style="left:50%; top:22%;" data-photo="photo1">
         <img src="photo1.png" alt="p1a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:50%; top:44%;" data-photo="photo1">
-        <div class="string"></div><div class="hook"></div>
+      <div class="ornament" style="left:60%; top:47%;" data-photo="photo1">
         <img src="photo2.png" alt="p1b"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:30%; top:44%;" data-photo="photo2">
-        <div class="string"></div><div class="hook"></div>
+      <div class="ornament" style="left:40%; top:47%;" data-photo="photo2">
         <img src="photo3.png" alt="p2a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:20%; top:64%;" data-photo="photo2">
-        <div class="string"></div><div class="hook"></div>
+      <div class="ornament" style="left:30%; top:70%;" data-photo="photo2">
         <img src="photo3.png" alt="p2b"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:40%; top:64%;" data-photo="photo3">
-        <div class="string"></div><div class="hook"></div>
+      <div class="ornament" style="left:50%; top:70%;" data-photo="photo3">
         <img src="photo1.png" alt="p3a"><div class="note">✉️</div>
       </div>
 
-      <div class="ornament" style="left:60%; top:64%;" data-photo="photo3">
-        <div class="string"></div><div class="hook"></div>
+      <div class="ornament" style="left:70%; top:70%;" data-photo="photo3">
         <img src="photo2.png" alt="p3b"><div class="note">✉️</div>
       </div>
     </div>
@@ -359,7 +353,7 @@
       </div>
       <div class="letters" id="letters"></div>
     </div>
-  </div>
+   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -387,7 +381,7 @@ const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("closeBtn");
 const titleEl = document.getElementById("title");
 const lettersEl = document.getElementById("letters");
-const mailbox = document.getElementById("mailbox"); // 추가: 메일박스 DOM
+const mailbox = document.getElementById("mailbox"); 
 
 function openModal(title){
   titleEl.textContent = title;
@@ -411,6 +405,12 @@ document.getElementById("loginBtn").addEventListener("click", async ()=>{
   try{
     const email = document.getElementById("email").value.trim();
     const pw = document.getElementById("password").value.trim();
+    
+    if(!email || !pw){
+      alert("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
+    
     await signInWithEmailAndPassword(auth, email, pw);
 
     loggedIn = true;
@@ -447,8 +447,6 @@ function renderList(list){
     return;
   }
   
-  // 뷰어 코드는 오로지 메일박스를 통해 전체 편지를 '읽는' 용도이므로,
-  // 편지 내용 상단에 photoKey(어떤 오너먼트인지)와 작성자를 모두 표시합니다.
   lettersEl.innerHTML = list.map(v=>`
     <div class="item">
       <div class="meta">${safeText(v.writer)} (오너먼트: ${safeText(v.photoKey)})</div>
@@ -457,9 +455,8 @@ function renderList(list){
   `).join("");
 }
 
-// ❌ 오너먼트 클릭 이벤트 제거 (편지 작성 불가)
+// 오너먼트 클릭 이벤트 제거: 오로지 메일박스를 통해서만 편지 확인
 // document.querySelectorAll(".ornament").forEach(o=>{ ... }); 
-// 오너먼트 클릭은 JS에서 완전히 막습니다. CSS에서 pointer-events: none; 로도 막았습니다.
 
 // ✅ 메일박스 클릭 이벤트 (전체 편지 보기)
 mailbox.addEventListener("click", async ()=>{
@@ -550,4 +547,3 @@ snowTick();
 </script>
 </body>
 </html>
-
