@@ -1,379 +1,374 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>연지의 편지함 (보기 전용)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>연지의 편지함 (보기 전용)</title>
 
-  <style>
-    /* 작성자 코드의 전체 CSS를 그대로 복사했습니다. */
-    body{
-      margin:0;
-      background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.16), transparent 42%),
-                  linear-gradient(135deg, #b81d24 0%, #0b6b3a 100%);
-      color:#fff;
-      font-family: 'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
-      overflow-x:hidden;
-    }
+  <style>
+    body{
+      margin:0;
+      background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.16), transparent 42%),
+                  linear-gradient(135deg, #b81d24 0%, #0b6b3a 100%);
+      color:#fff;
+      font-family: 'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+      overflow-x:hidden;
+    }
 
-    #snow{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index: 2;
-    }
+    #snow{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 2;
+    }
 
-    .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 28px 16px 80px;
-      text-align:center;
-      position: relative;
-      z-index: 3;
-    }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 80px;
+      text-align:center;
+      position: relative;
+      z-index: 3;
+    }
 
-    h1{ margin:10px 0 6px; }
-    .sub{ font-size:14px; opacity:.85; margin-bottom:12px; }
+    h1{ margin:10px 0 6px; }
+    .sub{ font-size:14px; opacity:.85; margin-bottom:12px; }
 
-    .musicBtn{
-      margin: 10px auto 16px;
-      padding:10px 14px;
-      border:0;
-      border-radius:999px;
-      background: rgba(255,255,255,.18);
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-      backdrop-filter: blur(6px);
-    }
+    .musicBtn{
+      margin: 10px auto 16px;
+      padding:10px 14px;
+      border:0;
+      border-radius:999px;
+      background: rgba(255,255,255,.18);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      backdrop-filter: blur(6px);
+    }
 
-    .stage{
-      position:relative;
-      width:min(520px, 92vw);
-      aspect-ratio:1/1;
-      margin:0 auto;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius:22px;
-      box-shadow:0 18px 50px rgba(0,0,0,.25);
-      overflow:hidden;
-    }
+    .stage{
+      position:relative;
+      width:min(520px, 92vw);
+      aspect-ratio:1/1;
+      margin:0 auto;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius:22px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
 
-    .tree{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      z-index: 1;
-      filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
-    }
+    .tree{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      z-index: 1;
+      filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
+    }
 
-    .treeGlow{
-      position:absolute;
-      inset:0;
-      z-index: 2;
-      pointer-events:none;
-      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.20), transparent 55%);
-      animation: glowPulse 2.4s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-    @keyframes glowPulse{
-      0%{ opacity:.25; transform: scale(1); }
-      50%{ opacity:.65; transform: scale(1.02); }
-      100%{ opacity:.25; transform: scale(1); }
-    }
+    .light{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,.95);
+      box-shadow: 0 0 14px rgba(255,255,255,.95);
+      animation: twinkle 1.4s infinite ease-in-out;
+      opacity: .75;
+      z-index: 2;
+    }
+    @keyframes twinkle{
+      0%{ transform: scale(.7); opacity:.35; }
+      50%{ transform: scale(1.3); opacity:1; }
+      100%{ transform: scale(.7); opacity:.35; }
+    }
 
-    .light{
-      position:absolute;
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background: rgba(255,255,255,.95);
-      box-shadow: 0 0 14px rgba(255,255,255,.95);
-      animation: twinkle 1.4s infinite ease-in-out;
-      opacity: .75;
-      z-index: 2;
-    }
-    @keyframes twinkle{
-      0%{ transform: scale(.7); opacity:.35; }
-      50%{ transform: scale(1.3); opacity:1; }
-      100%{ transform: scale(.7); opacity:.35; }
-    }
+    .treeGlow{
+      position:absolute;
+      inset:0;
+      z-index: 2;
+      pointer-events:none;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.20), transparent 55%);
+      animation: glowPulse 2.4s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes glowPulse{
+      0%{ opacity:.25; transform: scale(1); }
+      50%{ opacity:.65; transform: scale(1.02); }
+      100%{ opacity:.25; transform: scale(1); }
+    }
 
-     .ornament{
-        position:absolute;
-        width:78px;
-        height:auto;
-        cursor:default; 
-        z-index: 3;
-        transform: translate(-50%, -50%);
-        filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
-        transition: none; /* 호버 효과 제거 */
-        pointer-events: none; /* 클릭 이벤트 원천 봉쇄 */
-      }
-     .ornament:hover{
-        transform: translate(-50%, -50%); 
-      }
+    /* ===== 오너먼트: 보기 전용(클릭 불가) ===== */
+    .ornament{
+      position:absolute;
+      width:78px;
+      height:auto;
+      cursor:default;
+      z-index: 3;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      pointer-events:none; /* 오너먼트 클릭 완전 차단 */
+    }
+    .ornament img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
 
-     /* 이미지가 장식 그 자체 */
-     .ornament img{
-        width:100%;
-        height:auto;
-        display:block;
-      }
-    .hook{
-      position:absolute;
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      border: 2px solid rgba(255,255,255,.95);
-      background: rgba(0,0,0,.10);
-      top:-14px;
-      left:50%;
-      transform: translateX(-50%);
-      box-shadow: 0 6px 14px rgba(0,0,0,.25);
-    }
-    .string{
-      position:absolute;
-      width:2px;
-      height:22px;
-      background: rgba(255,255,255,.75);
-      top:-22px;
-      left:50%;
-      transform: translateX(-50%);
-      border-radius: 2px;
-    }
-    .note{
-      position:absolute;
-      right:-6px; 
-      bottom:-6px; 
-      width:30px;
-      height:30px;
-      border-radius:50%;
-      background:#fff;
-      color:#111;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:16px;
-      box-shadow:0 6px 14px rgba(0,0,0,.25);
-    }
+    .note{
+      position:absolute;
+      right:2px;
+      bottom:2px;
+      transform: scale(.9);
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      background:#fff;
+      color:#111;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:16px;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+    }
 
-    /* mailbox.png */
-    .mailbox{
-      position:absolute;
-      left:85%;
-      top:86%;
-      transform:translate(-50%,-50%);
-      width:72px;
-      height:72px;
-      border-radius:18px;
-      background: rgba(255,255,255,.12);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      z-index: 6;
-      box-shadow: 0 14px 28px rgba(0,0,0,.25);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,.2);
-    }
-    .mailbox:hover{ transform:translate(-50%,-50%) scale(1.03); }
-    .mailbox img{
-      width:52px;
-      height:52px;
-      object-fit: contain;
-      display:block;
-      pointer-events:none;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
-    }
+    /* 메일박스(mailbox.png) */
+    .mailbox{
+      position:absolute;
+      left:85%;
+      top:86%;
+      transform:translate(-50%,-50%);
+      width:72px;
+      height:72px;
+      border-radius:18px;
+      background: rgba(255,255,255,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index: 6;
+      box-shadow: 0 14px 28px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .mailbox:hover{ transform:translate(-50%,-50%) scale(1.03); }
+    .mailbox img{
+      width:52px;
+      height:52px;
+      object-fit: contain;
+      display:block;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+    }
 
-    /* 모달 */
-    .modalBack{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index: 20;
-    }
-    .modal{
-      width:min(720px, 96vw);
-      background: rgba(255,255,255,.96);
-      color:#222;
-      border-radius:18px;
-      padding:16px;
-      text-align:left;
-      box-shadow: 0 18px 70px rgba(0,0,0,.35);
-    }
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:10px;
-    }
-    .close{
-      border:0;
-      background:#eee;
-      padding:6px 10px;
-      border-radius:8px;
-      cursor:pointer;
-    }
+    /* 로그인 패널(뷰어에만 존재) */
+    .loginPanel{
+      width:min(520px, 92vw);
+      margin: 0 auto 14px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:12px;
+      text-align:left;
+      backdrop-filter: blur(8px);
+    }
+    .loginPanel input{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.22);
+      margin-bottom:8px;
+      font-size:14px;
+      box-sizing:border-box;
+      background: rgba(255,255,255,.9);
+    }
+    .loginPanel button{
+      width:100%;
+      padding:10px;
+      border-radius:999px;
+      border:0;
+      background:#111;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .loginHint{
+      font-size:12px;
+      opacity:.85;
+      margin-top:8px;
+    }
 
-    .letters{
-      max-height:360px;
-      overflow:auto;
-      background:#f7f7f7;
-      border-radius:12px;
-      padding:10px;
-      color:#222;
-    }
-    .item{
-      background:#fff;
-      border-radius:12px;
-      padding:10px;
-      margin-bottom:8px;
-      font-size:14px;
-    }
-    .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
-    .msg{ white-space: pre-line; line-height: 1.7; }
+    /* 모달 */
+    .modalBack{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index: 20;
+    }
+    .modal{
+      width:min(720px, 96vw);
+      background: rgba(255,255,255,.96);
+      color:#222;
+      border-radius:18px;
+      padding:16px;
+      text-align:left;
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
+    }
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .close{
+      border:0;
+      background:#eee;
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+    }
 
-    /* 로그인 패널 */
-    .loginPanel{
-      width:min(520px, 92vw);
-      margin: 0 auto 14px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      padding:12px;
-      text-align:left;
-      backdrop-filter: blur(8px);
-    }
-    .loginPanel input{
-      width:100%;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.22);
-      margin-bottom:8px;
-      font-size:14px;
-      box-sizing:border-box;
-      background: rgba(255,255,255,.9);
-    }
-    .loginPanel button{
-      width:100%;
-      padding:10px;
-      border-radius:999px;
-      border:0;
-      background:#111;
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .loginHint{
-      font-size:12px;
-      opacity:.85;
-      margin-top:8px;
-    }
+    .letters{
+      max-height:260px;
+      overflow:auto;
+      background:#f7f7f7;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+      color:#222;
+    }
+    .item{
+      background:#fff;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:8px;
+      font-size:14px;
+    }
+    .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
+    .msg{ white-space: pre-line; line-height: 1.7; }
 
-    .hint{
-      margin-top: 12px;
-      font-size: 13px;
-      opacity: .85;
-    }
-  </style>
+    /* 편지 아이콘(스택) */
+    .envelopes{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .envBtn{
+      width:52px;
+      height:52px;
+      border-radius:14px;
+      border:0;
+      cursor:pointer;
+      background:#fff;
+      box-shadow: 0 10px 22px rgba(0,0,0,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+    }
+
+    .hint{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: .85;
+    }
+  </style>
 </head>
 
 <body>
-  <canvas id="snow"></canvas>
+  <canvas id="snow"></canvas>
 
-  <div class="wrap">
-    <h1>🎄 연지의 편지함 🎄</h1>
-        <div class="sub">로그인 후 메일박스(📮)를 눌러 전체 편지를 볼 수 있어</div>
+  <div class="wrap">
+    <h1>🎄 연지의 편지함 🎄</h1>
+    <div class="sub">로그인 후 메일박스(📮)를 누르고 ✉️를 눌러 편지를 확인해</div>
 
-        <div class="loginPanel" id="loginPanel">
-      <input id="email" placeholder="연지 이메일">
-      <input id="password" type="password" placeholder="비밀번호">
-      <button id="loginBtn">로그인하고 편지 보기</button>
-      <div class="loginHint">로그인 후 전체 편지가 보여.</div>
-    </div>
+    <div class="loginPanel" id="loginPanel">
+      <input id="email" placeholder="연지 이메일">
+      <input id="password" type="password" placeholder="비밀번호">
+      <button id="loginBtn">로그인</button>
+      <div class="loginHint">로그인 성공 후 메일박스에서 편지 스택이 보여.</div>
+    </div>
 
-    <button id="musicBtn" class="musicBtn">음악 켜기</button>
-    <audio id="bgm" src="christmas.mp3" loop preload="auto"></audio>
+    <button id="musicBtn" class="musicBtn">음악 켜기</button>
+    <audio id="bgm" src="christmas.mp3" loop preload="auto"></audio>
 
-    <div class="stage">
-      <img src="tree.png" class="tree" alt="tree">
-      <div class="treeGlow"></div>
+    <div class="stage">
+      <img src="tree.png" class="tree" alt="tree">
+      <div class="treeGlow"></div>
 
-      <div id="mailbox" class="mailbox" title="전체 편지 모아보기">
-        <img src="mailbox.png" alt="mailbox">
-      </div>
+      <div id="mailbox" class="mailbox" title="전체 편지 모아보기">
+        <img src="mailbox.png" alt="mailbox">
+      </div>
 
-      <div class="light" style="left:38%; top:22%; animation-delay:0s;"></div>
-      <div class="light" style="left:58%; top:28%; animation-delay:.35s;"></div>
-      <div class="light" style="left:46%; top:36%; animation-delay:.7s;"></div>
-      <div class="light" style="left:33%; top:48%; animation-delay:1.05s;"></div>
-      <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
-      <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
+      <div class="light" style="left:38%; top:22%; animation-delay:0s;"></div>
+      <div class="light" style="left:58%; top:28%; animation-delay:.35s;"></div>
+      <div class="light" style="left:46%; top:36%; animation-delay:.7s;"></div>
+      <div class="light" style="left:33%; top:48%; animation-delay:1.05s;"></div>
+      <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
+      <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
 
-            <div class="ornament" style="left:46%; top:22%;" data-photo="photo1">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo1.png" alt="p1a"><div class="note">✉️</div>
-      </div>
+      <!-- 작성자 모드와 동일한 6개 오너먼트(뷰어는 클릭 불가) -->
+      <div class="ornament" style="left:50%; top:22%;" data-photo="photo1">
+        <img src="photo1.png" alt="p1a"><div class="note">✉️</div>
+      </div>
+      <div class="ornament" style="left:60%; top:47%;" data-photo="photo1">
+        <img src="photo2.png" alt="p1b"><div class="note">✉️</div>
+      </div>
+      <div class="ornament" style="left:40%; top:47%;" data-photo="photo2">
+        <img src="photo3.png" alt="p2a"><div class="note">✉️</div>
+      </div>
+      <div class="ornament" style="left:30%; top:70%;" data-photo="photo2">
+        <img src="photo3.png" alt="p2b"><div class="note">✉️</div>
+      </div>
+      <div class="ornament" style="left:50%; top:70%;" data-photo="photo3">
+        <img src="photo1.png" alt="p3a"><div class="note">✉️</div>
+      </div>
+      <div class="ornament" style="left:70%; top:70%;" data-photo="photo3">
+        <img src="photo2.png" alt="p3b"><div class="note">✉️</div>
+      </div>
+    </div>
 
-      <div class="ornament" style="left:50%; top:44%;" data-photo="photo1">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo2.png" alt="p1b"><div class="note">✉️</div>
-      </div>
+    <div class="hint">연지야 생일 축하해</div>
+  </div>
 
-      <div class="ornament" style="left:30%; top:44%;" data-photo="photo2">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo3.png" alt="p2a"><div class="note">✉️</div>
-      </div>
+  <!-- 모달 -->
+  <div class="modalBack" id="modal">
+    <div class="modal">
+      <div class="top">
+        <strong id="title"></strong>
+        <button class="close" id="closeBtn">닫기</button>
+      </div>
 
-      <div class="ornament" style="left:20%; top:64%;" data-photo="photo2">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo3.png" alt="p2b"><div class="note">✉️</div>
-      </div>
+      <!-- 편지 내용 영역 -->
+      <div class="letters" id="letters"></div>
 
-      <div class="ornament" style="left:40%; top:64%;" data-photo="photo3">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo1.png" alt="p3a"><div class="note">✉️</div>
-      </div>
-
-      <div class="ornament" style="left:60%; top:64%;" data-photo="photo3">
-        <div class="string"></div><div class="hook"></div>
-        <img src="photo2.png" alt="p3b"><div class="note">✉️</div>
-      </div>
-    </div>
-
-    <div class="hint">연지야 생일 축하해</div>
-  </div>
-
-  <div class="modalBack" id="modal">
-    <div class="modal">
-      <div class="top">
-        <strong id="title"></strong>
-        <button class="close" id="closeBtn">닫기</button>
-      </div>
-      <div class="letters" id="letters"></div>
-    </div>
-  </div>
+      <!-- ✉️ 스택 영역 -->
+      <div id="envelopeArea" style="display:none;">
+        <div class="envelopes" id="envelopes"></div>
+      </div>
+    </div>
+  </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import {
+  getFirestore, collection, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
-  authDomain: "yj-birthday.firebaseapp.com",
-  projectId: "yj-birthday",
-  storageBucket: "yj-birthday.firebasestorage.app",
-  messagingSenderId: "664910382832",
-  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
+  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
+  authDomain: "yj-birthday.firebaseapp.com",
+  projectId: "yj-birthday",
+  storageBucket: "yj-birthday.firebasestorage.app",
+  messagingSenderId: "664910382832",
+  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -381,185 +376,207 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 function safeText(s){
-  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
-const modal = document.getElementById("modal");
-const closeBtn = document.getElementById("closeBtn");
-const titleEl = document.getElementById("title");
-const lettersEl = document.getElementById("letters");
-const mailbox = document.getElementById("mailbox"); 
-
-function openModal(title){
-  titleEl.textContent = title;
-  modal.style.display = "flex";
-}
-function closeModal(){
-  modal.style.display = "none";
-}
-closeBtn.addEventListener("click", closeModal);
-modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
-
-function showNeedLogin(){
-  openModal("로그인이 필요해");
-  lettersEl.innerHTML = `<div class="item"><div class="msg">연지 계정으로 로그인해야 전체 편지를 볼 수 있어.</div></div>`;
-}
-
-let loggedIn = false;
-
-// ===== 로그인 =====
-document.getElementById("loginBtn").addEventListener("click", async ()=>{
-  try{
-    const email = document.getElementById("email").value.trim();
-    const pw = document.getElementById("password").value.trim();
-    
-    if(!email || !pw){
-      alert("이메일과 비밀번호를 입력해주세요.");
-      return;
-    }
-    
-    await signInWithEmailAndPassword(auth, email, pw);
-
-    loggedIn = true;
-    document.getElementById("loginPanel").style.display = "none";
-    
-    alert("로그인 완료! 메일박스를 눌러 전체 편지를 확인해봐.");
-    
-  }catch(e){
-    alert("로그인 실패: " + e.message);
-  }
-});
-
-// ===== 편지 목록 불러오기 (전체 편지) =====
-async function loadAllLetters(){
-  const snap = await getDocs(collection(db,"letters"));
-  const list = [];
-  snap.forEach(d=>{
-    const v = d.data();
-    list.push({
-      writer: v.writer || "익명",
-      message: v.message || "",
-      photoKey: v.photoKey || "",
-      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
-    });
-  });
-  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
-  return list;
-}
-
-function renderList(list){
-  if(list.length === 0){
-    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 도착한 편지가 없어.</div></div>`;
-    return;
-  }
-  
-  lettersEl.innerHTML = list.map(v=>`
-    <div class="item">
-      <div class="meta">${safeText(v.writer)} (오너먼트: ${safeText(v.photoKey)})</div>
-      <div class="msg">${safeText(v.message)}</div>
-      <div class="meta">${v.createdAtMs ? new Date(v.createdAtMs).toLocaleString('ko-KR') : ''}</div>
-    </div>
-  `).join("");
-}
-
-// ❌ 오너먼트 클릭 이벤트 제거: 오로지 메일박스를 통해서만 편지 확인
-document.querySelectorAll(".ornament").forEach(o=>{
-  o.addEventListener("click", (e)=>{
-    // 오너먼트 클릭 시 아무 일도 일어나지 않도록 막습니다.
-    e.preventDefault();
-    if(!loggedIn){
-      showNeedLogin();
-    }
-  });
-});
-
-
-// ✅ 메일박스 클릭 이벤트 (전체 편지 보기)
-mailbox.addEventListener("click", async ()=>{
-  if(!loggedIn){ showNeedLogin(); return; }
-  openModal("📮 전체 편지 모아보기");
-  try{
-    const list = await loadAllLetters();
-    renderList(list);
-  }catch(e){
-    lettersEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
-  }
-});
-
-
-// ===== 음악 토글 =====
+/* ===== 음악 토글(작성자 모드와 동일) ===== */
 const bgm = document.getElementById("bgm");
 const musicBtn = document.getElementById("musicBtn");
 let playing = false;
 
 musicBtn.addEventListener("click", async () => {
-  try{
-    if(!playing){
-      await bgm.play();
-      playing = true;
-      musicBtn.textContent = "음악 끄기";
-    }else{
-      bgm.pause();
-      playing = false;
-      musicBtn.textContent = "음악 켜기";
-    }
-  }catch(e){
-    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
-  }
+  try{
+    if(!playing){
+      await bgm.play();
+      playing = true;
+      musicBtn.textContent = "음악 끄기";
+    }else{
+      bgm.pause();
+      playing = false;
+      musicBtn.textContent = "음악 켜기";
+    }
+  }catch(e){
+    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
+  }
 });
 
-// ===== 눈 내리는 효과(Canvas) =====
+/* ===== 모달 ===== */
+const modal = document.getElementById("modal");
+const closeBtn = document.getElementById("closeBtn");
+const titleEl = document.getElementById("title");
+const lettersEl = document.getElementById("letters");
+const envelopeArea = document.getElementById("envelopeArea");
+const envelopesEl = document.getElementById("envelopes");
+const mailbox = document.getElementById("mailbox");
+
+function openModalBase(title){
+  titleEl.textContent = title;
+  modal.style.display = "flex";
+}
+function closeModal(){
+  modal.style.display = "none";
+}
+closeBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", (e)=>{
+  if(e.target === modal) closeModal();
+});
+
+function showNeedLogin(){
+  openModalBase("로그인이 필요해");
+  envelopeArea.style.display = "none";
+  lettersEl.style.display = "block";
+  lettersEl.innerHTML = `<div class="item"><div class="msg">연지 계정으로 로그인해야 편지를 볼 수 있어.</div></div>`;
+}
+
+/* ===== 로그인 ===== */
+let loggedIn = false;
+document.getElementById("loginBtn").addEventListener("click", async ()=>{
+  try{
+    const email = document.getElementById("email").value.trim();
+    const pw = document.getElementById("password").value.trim();
+
+    if(!email || !pw){
+      alert("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
+
+    await signInWithEmailAndPassword(auth, email, pw);
+    loggedIn = true;
+    document.getElementById("loginPanel").style.display = "none";
+    alert("로그인 완료! 메일박스를 눌러 편지를 확인해봐.");
+  }catch(e){
+    alert("로그인 실패: " + e.message);
+  }
+});
+
+/* ===== 편지 로드(전체) ===== */
+let allLettersCache = [];
+
+async function loadAllLetters(){
+  const snap = await getDocs(collection(db,"letters"));
+  const list = [];
+  snap.forEach(d=>{
+    const v = d.data();
+    list.push({
+      id: d.id,
+      writer: v.writer || "익명",
+      message: v.message || "",
+      photoKey: v.photoKey || "",
+      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+    });
+  });
+  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+  return list;
+}
+
+function renderEnvelopeStack(list){
+  if(list.length === 0){
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">아직 도착한 편지가 없어.</div></div>`;
+    return;
+  }
+
+  envelopesEl.innerHTML = list.map(x=>`
+    <button class="envBtn" data-id="${x.id}" title="${safeText(x.writer)}">✉️</button>
+  `).join("");
+}
+
+function renderOneLetter(x){
+  lettersEl.innerHTML = `
+    <div class="item">
+      <div class="meta">${safeText(x.writer)}</div>
+      <div class="msg">${safeText(x.message)}</div>
+      <div class="meta">${x.createdAtMs ? new Date(x.createdAtMs).toLocaleString('ko-KR') : ''}</div>
+    </div>
+  `;
+}
+
+/* ===== 메일박스 클릭: 스택만 보여주기 ===== */
+mailbox.addEventListener("click", async ()=>{
+  if(!loggedIn){ showNeedLogin(); return; }
+
+  openModalBase("📮 전체 편지함");
+
+  // 처음엔 스택만 보여주고, 내용은 숨김
+  lettersEl.style.display = "none";
+  envelopeArea.style.display = "block";
+  envelopesEl.innerHTML = `<div class="item"><div class="msg">불러오는 중...</div></div>`;
+
+  try{
+    allLettersCache = await loadAllLetters();
+    renderEnvelopeStack(allLettersCache);
+  }catch(e){
+    envelopesEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+  }
+});
+
+/* ===== ✉️ 클릭: 해당 편지 내용 표시 ===== */
+envelopesEl.addEventListener("click", (e)=>{
+  const b = e.target.closest(".envBtn");
+  if(!b) return;
+
+  const found = allLettersCache.find(v=>v.id === b.dataset.id);
+  if(!found) return;
+
+  envelopeArea.style.display = "none";
+  lettersEl.style.display = "block";
+  renderOneLetter(found);
+});
+
+/* ===== 눈 내리는 효과(Canvas) : 작성자 모드 동일 ===== */
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
-let W = 0, H = 0;
 
+let W = 0, H = 0;
 function resizeSnow(){
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resizeSnow);
 resizeSnow();
 
 const flakes = [];
 function rebuildFlakes(){
-  flakes.length = 0;
-  const count = Math.min(160, Math.floor((W * H) / 12000));
-  for(let i=0;i<count;i++){
-    flakes.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 2.2 + 0.7,
-      vx: Math.random() * 0.6 - 0.3,
-      vy: Math.random() * 1.3 + 0.5,
-      a: Math.random() * 0.55 + 0.25,
-      wob: Math.random() * 3.14
-    });
-  }
+  flakes.length = 0;
+  const count = Math.min(160, Math.floor((W * H) / 12000));
+  for(let i=0;i<count;i++){
+    flakes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2.2 + 0.7,
+      vx: Math.random() * 0.6 - 0.3,
+      vy: Math.random() * 1.3 + 0.5,
+      a: Math.random() * 0.55 + 0.25,
+      wob: Math.random() * 3.14
+    });
+  }
 }
 rebuildFlakes();
 window.addEventListener("resize", rebuildFlakes);
 
 function snowTick(){
-  ctx.clearRect(0,0,W,H);
-  for(const f of flakes){
-    f.wob += 0.02;
-    f.x += f.vx + Math.sin(f.wob) * 0.25;
-    f.y += f.vy;
+  ctx.clearRect(0,0,W,H);
 
-    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
-    if(f.x > W + 10) f.x = -10;
-    if(f.x < -10) f.x = W + 10;
+  for(const f of flakes){
+    f.wob += 0.02;
+    f.x += f.vx + Math.sin(f.wob) * 0.25;
+    f.y += f.vy;
 
-    ctx.globalAlpha = f.a;
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(snowTick);
+    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
+    if(f.x > W + 10) f.x = -10;
+    if(f.x < -10) f.x = W + 10;
+
+    ctx.globalAlpha = f.a;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(snowTick);
 }
 snowTick();
 </script>
 </body>
 </html>
+
