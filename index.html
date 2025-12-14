@@ -305,7 +305,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 import {
-  getFirestore, collection, addDoc, query, where, orderBy, getDocs,
+  getFirestore, collection, addDoc, query, where, getDocs,
   serverTimestamp, doc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
@@ -318,10 +318,7 @@ const firebaseConfig = {
   appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
 };
 
-// 너의 writeKey
 const WRITE_KEY = "YJ_TREE_2025_9aK3QzT2";
-
-// 링크 키(없으면 보기 전용)
 const urlKey = new URLSearchParams(location.search).get("k") || "";
 const canWrite = (urlKey === WRITE_KEY);
 
@@ -347,7 +344,7 @@ musicBtn.addEventListener("click", async () => {
       musicBtn.textContent = "음악 켜기";
     }
   }catch(e){
-    alert("브라우저 정책 때문에 재생이 막혔어. 버튼을 다시 눌러줘.");
+    alert("재생이 막혔어. 버튼을 다시 눌러줘.");
   }
 });
 
@@ -356,16 +353,16 @@ const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("closeBtn");
 const lettersEl = document.getElementById("letters");
 const titleEl = document.getElementById("title");
-const formArea = document.getElementById("formArea");
+const formArea = document.getElementById("formArea"); // 없으면 아래 줄 지워도 됨
 const writerEl = document.getElementById("writer");
 const messageEl = document.getElementById("message");
 const sendBtn = document.getElementById("send");
 
 let currentPhoto = "";
-let editingId = null; // 수정 모드일 때만 값 존재
+let editingId = null;
 
-// 보기 전용이면 입력 영역 숨김
-if(!canWrite){
+// 보기전용이면 폼 숨기기(너가 원하는 정책)
+if(formArea && !canWrite){
   formArea.style.display = "none";
 }
 
@@ -379,7 +376,6 @@ function openModal(photo){
   titleEl.textContent = photo + " 편지";
   modal.style.display = "flex";
 
-  // 모달 열 때 수정 모드 해제
   editingId = null;
   if(canWrite) sendBtn.textContent = "편지 남기기";
 
@@ -394,7 +390,11 @@ modal.addEventListener("click", (e)=>{
   if(e.target === modal) closeModal();
 });
 
-// 편지 목록 렌더
+function safeText(s){
+  return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+// 목록 렌더
 function renderLetters(list){
   if(list.length === 0){
     lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어.</div></div>`;
@@ -404,63 +404,65 @@ function renderLetters(list){
   const myUid = auth.currentUser.uid;
 
   lettersEl.innerHTML = list.map(v=>{
-    const safeMsg = (v.message || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
     const canEditMine = canWrite && v.authorUid === myUid;
-
     return `
       <div class="item">
-        <div class="meta">${v.writer}</div>
-        <div class="msg">${safeMsg}</div>
+        <div class="meta">${safeText(v.writer)}</div>
+        <div class="msg">${safeText(v.message)}</div>
         ${canEditMine ? `<button class="editBtn" data-id="${v.id}">수정</button>` : ``}
       </div>
     `;
   }).join("");
 }
 
-// 수정 버튼 클릭 → textarea에 불러오기
+// 수정 버튼 클릭 → textarea 채우기
 lettersEl.addEventListener("click", (e)=>{
   const btn = e.target.closest(".editBtn");
   if(!btn) return;
-
-  // 보기 전용에서는 수정 자체가 없음
   if(!canWrite) return;
 
-  const id = btn.dataset.id;
-  // 해당 메시지를 화면에서 다시 찾아서 textarea에 넣기(간단 방식)
   const item = btn.closest(".item");
-  const msgDiv = item.querySelector(".msg");
-  const writerDiv = item.querySelector(".meta");
+  const meta = item.querySelector(".meta")?.textContent || "익명";
+  const msg  = item.querySelector(".msg")?.textContent || "";
 
-  editingId = id;
-  writerEl.value = (writerDiv?.textContent || "익명").trim();
-  messageEl.value = (msgDiv?.textContent || "").trim();
+  editingId = btn.dataset.id;
+  writerEl.value = meta.trim();
+  messageEl.value = msg.trim();
   sendBtn.textContent = "수정 저장";
   messageEl.focus();
 });
 
+// 편지 불러오기: orderBy 제거(인덱스 없이 동작) + JS에서 정렬
 async function loadLetters(){
-  const q = query(
-    collection(db,"letters"),
-    where("photoKey","==",currentPhoto),
-    orderBy("createdAt","desc")
-  );
+  try{
+    const q = query(
+      collection(db,"letters"),
+      where("photoKey","==",currentPhoto)
+    );
 
-  const snap = await getDocs(q);
-  const list = [];
-  snap.forEach(d=>{
-    const v = d.data();
-    list.push({
-      id: d.id,
-      writer: v.writer || "익명",
-      message: v.message || "",
-      authorUid: v.authorUid || ""
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(d=>{
+      const v = d.data();
+      list.push({
+        id: d.id,
+        writer: v.writer || "익명",
+        message: v.message || "",
+        authorUid: v.authorUid || "",
+        createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+      });
     });
-  });
 
-  renderLetters(list);
+    // 최신순 정렬
+    list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+    renderLetters(list);
+
+  }catch(e){
+    lettersEl.innerHTML = `<div class="item"><div class="msg">불러오기 실패: ${safeText(e.message)}</div></div>`;
+  }
 }
 
-// 저장/수정 저장
+// 저장 / 수정 저장
 sendBtn.addEventListener("click", async ()=>{
   if(!canWrite){
     alert("보기 전용 링크야. 쓰기 링크(?k=...)로 접속해야 해.");
@@ -476,77 +478,34 @@ sendBtn.addEventListener("click", async ()=>{
 
   sendBtn.disabled = true;
 
-  // 수정 모드
-  if(editingId){
-    await updateDoc(doc(db, "letters", editingId), {
-      writer,
-      message,
-      // Rules 통과용(필수)
-      writeKey: urlKey
-    });
-    editingId = null;
-    sendBtn.textContent = "편지 남기기";
-  }else{
-    // 새 편지
-    await addDoc(collection(db,"letters"),{
-      photoKey: currentPhoto,
-      writer,
-      message,
-      authorUid: auth.currentUser.uid,
-      writeKey: urlKey,
-      createdAt: serverTimestamp()
-    });
-  }
+  try{
+    if(editingId){
+      await updateDoc(doc(db,"letters", editingId), {
+        writer,
+        message,
+        writeKey: urlKey // Rules 통과용
+      });
+      editingId = null;
+      sendBtn.textContent = "편지 남기기";
+    }else{
+      await addDoc(collection(db,"letters"),{
+        photoKey: currentPhoto,
+        writer,
+        message,
+        authorUid: auth.currentUser.uid, // 내 글만 수정 가능하도록 저장
+        writeKey: urlKey,                // Rules 통과용
+        createdAt: serverTimestamp()
+      });
+    }
 
-  messageEl.value = "";
-  sendBtn.disabled = false;
-  await loadLetters();
+    messageEl.value = "";
+    await loadLetters();
+
+  }catch(e){
+    alert("저장 실패: " + e.message);
+  }finally{
+    sendBtn.disabled = false;
+  }
 });
-
-// ===== 눈 내리는 효과(Canvas) =====
-const canvas = document.getElementById("snow");
-const ctx = canvas.getContext("2d");
-let W = 0, H = 0;
-
-function resize(){
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
-
-const flakes = Array.from({length: 120}, () => makeFlake());
-
-function makeFlake(){
-  return {
-    x: Math.random() * W,
-    y: Math.random() * H,
-    r: Math.random() * 2.2 + 0.6,
-    vx: Math.random() * 0.6 - 0.3,
-    vy: Math.random() * 1.2 + 0.4,
-    a: Math.random() * 0.5 + 0.4
-  };
-}
-
-function tick(){
-  ctx.clearRect(0,0,W,H);
-  for(const f of flakes){
-    f.x += f.vx;
-    f.y += f.vy;
-
-    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
-    if(f.x > W + 10) f.x = -10;
-    if(f.x < -10) f.x = W + 10;
-
-    ctx.globalAlpha = f.a;
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
-    ctx.fillStyle = "#ffffff";
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(tick);
-}
-tick();
 </script>
 
