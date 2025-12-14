@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>연지의 편지함 (보기 전용)</title>
+
+  <style>
+    body{
+      margin:0;
+      background: linear-gradient(135deg, #b81d24, #0b6b3a);
+      color:#222;
+      font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+    }
+    .wrap{
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+    h1{
+      text-align:center;
+      color:#fff;
+      margin-bottom:18px;
+    }
+    .login, .letters{
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+    }
+    input{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-bottom:10px;
+      font-size:14px;
+    }
+    button{
+      width:100%;
+      padding:10px;
+      border-radius:999px;
+      border:0;
+      background:#111;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .item{
+      background:#f7f7f7;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+    }
+    .meta{
+      font-size:12px;
+      opacity:.6;
+      margin-bottom:4px;
+    }
+    .msg{
+      white-space:pre-line;
+      line-height:1.7;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>🎄 연지의 편지함 🎄</h1>
+
+  <div id="login" class="login">
+    <input id="email" placeholder="이메일">
+    <input id="password" type="password" placeholder="비밀번호">
+    <button id="loginBtn">로그인</button>
+  </div>
+
+  <div id="letters" class="letters" style="display:none;"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
+  authDomain: "yj-birthday.firebaseapp.com",
+  projectId: "yj-birthday",
+  storageBucket: "yj-birthday.firebasestorage.app",
+  messagingSenderId: "664910382832",
+  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginBox = document.getElementById("login");
+const lettersBox = document.getElementById("letters");
+
+document.getElementById("loginBtn").onclick = async ()=>{
+  try{
+    const email = document.getElementById("email").value;
+    const pw = document.getElementById("password").value;
+
+    await signInWithEmailAndPassword(auth, email, pw);
+
+    loginBox.style.display = "none";
+    lettersBox.style.display = "block";
+    loadAllLetters();
+
+  }catch(e){
+    alert("로그인 실패");
+  }
+};
+
+async function loadAllLetters(){
+  const snap = await getDocs(collection(db,"letters"));
+  const list = [];
+
+  snap.forEach(d=>{
+    const v = d.data();
+    list.push({
+      writer: v.writer || "익명",
+      message: v.message || "",
+      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+    });
+  });
+
+  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
+
+  lettersBox.innerHTML = list.map(v=>`
+    <div class="item">
+      <div class="meta">${v.writer}</div>
+      <div class="msg">${v.message}</div>
+    </div>
+  `).join("");
+}
+</script>
+</body>
+</html>
