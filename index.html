@@ -6,83 +6,138 @@
   <title>연지의 크리스마스 트리</title>
 
   <style>
-    .light{
-  position:absolute;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background: rgba(255,255,255,.9);
-  box-shadow: 0 0 14px rgba(255,255,255,.9);
-  animation: twinkle 1.4s infinite ease-in-out;
-  opacity: .6;
-}
-@keyframes twinkle{
-  0%{ transform: scale(.7); opacity:.35; }
-  50%{ transform: scale(1.2); opacity:1; }
-  100%{ transform: scale(.7); opacity:.35; }
-}
-.light:nth-child(1){ animation-delay: .0s; }
-.light:nth-child(2){ animation-delay: .4s; }
-.light:nth-child(3){ animation-delay: .8s; }
-.light:nth-child(4){ animation-delay: 1.2s; }
-.light:nth-child(5){ animation-delay: .6s; }
-
     body{
       margin:0;
-      background: linear-gradient(180deg, #fff7cc, #ffefad);
-      color:#333;
+      background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.16), transparent 42%),
+                  linear-gradient(135deg, #b81d24 0%, #0b6b3a 100%);
+      color:#fff;
       font-family: 'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+      overflow-x:hidden;
     }
-    .wrap{
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 30px 16px 80px;
-      text-align:center;
-    }
-    h1{ margin:10px 0 6px; }
-    .sub{ font-size:14px; opacity:.75; margin-bottom:18px; }
 
+    /* 눈 캔버스 */
+    #snow{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 2;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 80px;
+      text-align:center;
+      position: relative;
+      z-index: 3;
+    }
+
+    h1{ margin:10px 0 6px; }
+    .sub{ font-size:14px; opacity:.85; margin-bottom:12px; }
+
+    .musicBtn{
+      margin: 10px auto 16px;
+      padding:10px 14px;
+      border:0;
+      border-radius:999px;
+      background: rgba(255,255,255,.18);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      backdrop-filter: blur(6px);
+    }
+
+    /* 트리 무대: 정방향(1:1) */
     .stage{
       position:relative;
       width:min(520px, 92vw);
-      aspect-ratio:1/1.2;
+      aspect-ratio:1/1;
       margin:0 auto;
-      background:rgba(255,255,255,.6);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
       border-radius:22px;
-      box-shadow:0 14px 40px rgba(0,0,0,.15);
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
       overflow:hidden;
     }
+
     .tree{
       position:absolute;
       inset:0;
       width:100%;
       height:100%;
-      object-fit:contain;
+      object-fit: contain;
+      z-index: 1;
+      filter: drop-shadow(0 16px 30px rgba(0,0,0,.22));
     }
 
-    <div class="light" style="left:32%; top:22%;"></div>
-<div class="light" style="left:58%; top:28%;"></div>
-<div class="light" style="left:44%; top:40%;"></div>
-<div class="light" style="left:28%; top:52%;"></div>
-<div class="light" style="left:62%; top:58%;"></div>
+    /* 반짝이 전구 */
+    .light{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,.95);
+      box-shadow: 0 0 14px rgba(255,255,255,.95);
+      animation: twinkle 1.4s infinite ease-in-out;
+      opacity: .75;
+      z-index: 2;
+    }
+    @keyframes twinkle{
+      0%{ transform: scale(.7); opacity:.35; }
+      50%{ transform: scale(1.3); opacity:1; }
+      100%{ transform: scale(.7); opacity:.35; }
+    }
 
-    
+    /* 오너먼트(사진) */
     .ornament{
       position:absolute;
-      width:90px;
-      height:90px;
+      width:82px;
+      height:82px;
       border-radius:50%;
       overflow:hidden;
-      border:3px solid #fff;
       cursor:pointer;
-      box-shadow:0 10px 20px rgba(0,0,0,.2);
+      z-index: 3;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 12px 24px rgba(0,0,0,.35);
+      border: 3px solid rgba(255,255,255,.9);
       background:#fff;
+      transition: transform .15s ease;
+    }
+    .ornament:hover{
+      transform: translate(-50%, -50%) scale(1.04);
     }
     .ornament img{
       width:100%;
       height:100%;
-      object-fit:cover;
+      object-fit: cover;
+      display:block;
     }
+
+    /* 고리(오너먼트 느낌) */
+    .hook{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border: 2px solid rgba(255,255,255,.95);
+      background: rgba(0,0,0,.10);
+      top:-14px;
+      left:50%;
+      transform: translateX(-50%);
+      box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    }
+    .string{
+      position:absolute;
+      width:2px;
+      height:22px;
+      background: rgba(255,255,255,.75);
+      top:-22px;
+      left:50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    /* 편지 아이콘 배지 */
     .note{
       position:absolute;
       right:-6px;
@@ -91,28 +146,33 @@
       height:30px;
       border-radius:50%;
       background:#fff;
+      color:#111;
       display:flex;
       align-items:center;
       justify-content:center;
       font-size:16px;
-      box-shadow:0 6px 14px rgba(0,0,0,.2);
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
     }
 
+    /* 모달 */
     .modalBack{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.45);
+      background:rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
       padding:16px;
+      z-index: 20;
     }
     .modal{
       width:min(720px, 96vw);
-      background:#fff;
+      background: rgba(255,255,255,.96);
+      color:#222;
       border-radius:18px;
       padding:16px;
       text-align:left;
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
     }
     .top{
       display:flex;
@@ -143,6 +203,8 @@
       font-size:14px;
     }
     .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
+    .msg{ white-space: pre-line; line-height: 1.7; }
+
     textarea,input{
       width:100%;
       padding:10px;
@@ -150,52 +212,83 @@
       border:1px solid #ccc;
       margin-bottom:8px;
       font-size:14px;
+      box-sizing: border-box;
     }
     button.send{
       width:100%;
       padding:10px;
       border-radius:999px;
       border:0;
-      background:#333;
+      background:#111;
       color:#fff;
       font-weight:700;
       cursor:pointer;
+    }
+
+    .hint{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: .85;
     }
   </style>
 </head>
 
 <body>
-<div class="wrap">
-  <h1>🎄 연지의 트리 편지함</h1>
-  <div class="sub">사진을 눌러서 편지를 남겨줘</div>
+  <canvas id="snow"></canvas>
 
-  <div class="stage">
-    <img src="tree.png" class="tree">
+  <div class="wrap">
+    <h1>🎄 연지의 트리 편지함</h1>
+    <div class="sub">오너먼트(사진)를 눌러서 편지를 남겨줘</div>
 
-    <div class="ornament" style="left:20%;top:25%;" data-photo="photo1">
-      <img src="photo1.jpg"><div class="note">✉️</div>
+    <button id="musicBtn" class="musicBtn">음악 켜기</button>
+    <audio id="bgm" src="christmas.mp3" loop preload="auto"></audio>
+
+    <div class="stage">
+      <img src="tree.png" class="tree" alt="tree">
+
+      <!-- 전구(트리 위에 예쁘게) -->
+      <div class="light" style="left:38%; top:22%; animation-delay:0s;"></div>
+      <div class="light" style="left:58%; top:28%; animation-delay:.35s;"></div>
+      <div class="light" style="left:46%; top:36%; animation-delay:.7s;"></div>
+      <div class="light" style="left:33%; top:48%; animation-delay:1.05s;"></div>
+      <div class="light" style="left:62%; top:54%; animation-delay:.55s;"></div>
+      <div class="light" style="left:42%; top:62%; animation-delay:.9s;"></div>
+
+      <!-- 오너먼트 위치(트리 정방향 기준) -->
+      <div class="ornament" style="left:50%; top:30%;" data-photo="photo1">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo1.jpg" alt="p1">
+        <div class="note">✉️</div>
+      </div>
+
+      <div class="ornament" style="left:36%; top:48%;" data-photo="photo2">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo2.jpg" alt="p2">
+        <div class="note">✉️</div>
+      </div>
+
+      <div class="ornament" style="left:64%; top:52%;" data-photo="photo3">
+        <div class="string"></div><div class="hook"></div>
+        <img src="photo3.jpg" alt="p3">
+        <div class="note">✉️</div>
+      </div>
     </div>
-    <div class="ornament" style="left:55%;top:35%;" data-photo="photo2">
-      <img src="photo2.jpg"><div class="note">✉️</div>
-    </div>
-    <div class="ornament" style="left:38%;top:60%;" data-photo="photo3">
-      <img src="photo3.jpg"><div class="note">✉️</div>
+
+    <div class="hint">쓰기 가능한 링크는 ?k=키 가 붙어야 해</div>
+  </div>
+
+  <div class="modalBack" id="modal">
+    <div class="modal">
+      <div class="top">
+        <strong id="title"></strong>
+        <button class="close" id="closeBtn">닫기</button>
+      </div>
+      <div class="letters" id="letters"></div>
+      <input id="writer" placeholder="이름 또는 별명">
+      <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
+      <button class="send" id="send">편지 남기기</button>
     </div>
   </div>
-</div>
-
-<div class="modalBack" id="modal">
-  <div class="modal">
-    <div class="top">
-      <strong id="title"></strong>
-      <button class="close" onclick="closeModal()">닫기</button>
-    </div>
-    <div class="letters" id="letters"></div>
-    <input id="writer" placeholder="이름 또는 별명">
-    <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
-    <button class="send" id="send">편지 남기기</button>
-  </div>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -213,54 +306,163 @@ const firebaseConfig = {
 
 const WRITE_KEY = "YJ_TREE_2025_9aK3QzT2";
 const urlKey = new URLSearchParams(location.search).get("k") || "";
-const canWrite = urlKey === WRITE_KEY;
+const canWrite = (urlKey === WRITE_KEY);
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 await signInAnonymously(auth);
 
+// ===== 음악 토글 =====
+const bgm = document.getElementById("bgm");
+const musicBtn = document.getElementById("musicBtn");
+let playing = false;
+
+musicBtn.addEventListener("click", async () => {
+  try{
+    if(!playing){
+      await bgm.play();
+      playing = true;
+      musicBtn.textContent = "음악 끄기";
+    }else{
+      bgm.pause();
+      playing = false;
+      musicBtn.textContent = "음악 켜기";
+    }
+  }catch(e){
+    alert("브라우저 정책 때문에 재생이 막혔어. 버튼을 다시 눌러줘.");
+  }
+});
+
+// ===== 모달/편지 =====
+const modal = document.getElementById("modal");
+const closeBtn = document.getElementById("closeBtn");
+const lettersEl = document.getElementById("letters");
+const titleEl = document.getElementById("title");
+const writerEl = document.getElementById("writer");
+const messageEl = document.getElementById("message");
+const sendBtn = document.getElementById("send");
+
 let currentPhoto = "";
 
 document.querySelectorAll(".ornament").forEach(o=>{
-  o.onclick = ()=>openModal(o.dataset.photo);
+  o.addEventListener("click", ()=>openModal(o.dataset.photo));
 });
 
-async function openModal(photo){
+function openModal(photo){
   currentPhoto = photo;
-  document.getElementById("title").textContent = photo + " 편지";
-  document.getElementById("modal").style.display = "flex";
-  await loadLetters();
+  titleEl.textContent = photo + " 편지";
+  modal.style.display = "flex";
+  loadLetters();
 }
 
-window.closeModal = ()=> document.getElementById("modal").style.display="none";
+function closeModal(){
+  modal.style.display = "none";
+}
+closeBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", (e)=>{
+  if(e.target === modal) closeModal();
+});
 
 async function loadLetters(){
-  const q = query(collection(db,"letters"),
+  const q = query(
+    collection(db,"letters"),
     where("photoKey","==",currentPhoto),
-    orderBy("createdAt","desc"));
+    orderBy("createdAt","desc")
+  );
+
   const snap = await getDocs(q);
-  const el = document.getElementById("letters");
-  el.innerHTML="";
+  const list = [];
   snap.forEach(d=>{
-    const v=d.data();
-    el.innerHTML+=`<div class="item"><div class="meta">${v.writer}</div>${v.message}</div>`;
+    const v = d.data();
+    list.push({
+      writer: v.writer || "익명",
+      message: v.message || ""
+    });
   });
+
+  if(list.length === 0){
+    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어. 첫 편지를 남겨줘.</div></div>`;
+    return;
+  }
+
+  lettersEl.innerHTML = list.map(v=>{
+    const safe = (v.message || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    return `<div class="item"><div class="meta">${v.writer}</div><div class="msg">${safe}</div></div>`;
+  }).join("");
 }
 
-document.getElementById("send").onclick = async ()=>{
-  if(!canWrite){ alert("쓰기 권한이 없어요"); return; }
+sendBtn.addEventListener("click", async ()=>{
+  if(!canWrite){
+    alert("쓰기 권한이 없어요. 링크에 ?k=키 를 포함한 주소로 접속해야 해.");
+    return;
+  }
+
+  const writer = writerEl.value.trim() || "익명";
+  const message = messageEl.value.trim();
+  if(message.length < 2){
+    alert("편지를 2글자 이상 적어줘");
+    return;
+  }
+
+  sendBtn.disabled = true;
   await addDoc(collection(db,"letters"),{
     photoKey: currentPhoto,
-    writer: writer.value||"익명",
-    message: message.value,
+    writer,
+    message,
     writeKey: WRITE_KEY,
     createdAt: serverTimestamp()
   });
-  message.value="";
+  messageEl.value = "";
+  sendBtn.disabled = false;
   await loadLetters();
-};
+});
+
+// ===== 눈 내리는 효과(Canvas) =====
+const canvas = document.getElementById("snow");
+const ctx = canvas.getContext("2d");
+let W = 0, H = 0;
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+const flakes = Array.from({length: 120}, () => makeFlake());
+
+function makeFlake(){
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 2.2 + 0.6,
+    vx: Math.random() * 0.6 - 0.3,
+    vy: Math.random() * 1.2 + 0.4,
+    a: Math.random() * 0.5 + 0.4
+  };
+}
+
+function tick(){
+  ctx.clearRect(0,0,W,H);
+  for(const f of flakes){
+    f.x += f.vx;
+    f.y += f.vy;
+
+    if(f.y > H + 10){ f.y = -10; f.x = Math.random() * W; }
+    if(f.x > W + 10) f.x = -10;
+    if(f.x < -10) f.x = W + 10;
+
+    ctx.globalAlpha = f.a;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(tick);
+}
+tick();
 </script>
 </body>
 </html>
-
