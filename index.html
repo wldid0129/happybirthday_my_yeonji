@@ -3,102 +3,236 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Happy Birthday</title>
+  <title>연지의 크리스마스 트리</title>
+
   <style>
     body{
       margin:0;
       background: linear-gradient(180deg, #fff7cc, #ffefad);
-      color:#333333;
+      color:#333;
       font-family: 'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
     }
     .wrap{
-      max-width:720px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px 16px 80px;
+      text-align:center;
+    }
+    h1{ margin:10px 0 6px; }
+    .sub{ font-size:14px; opacity:.75; margin-bottom:18px; }
+
+    .stage{
+      position:relative;
+      width:min(520px, 92vw);
+      aspect-ratio:1/1.2;
       margin:0 auto;
-      padding:64px 18px 80px;
+      background:rgba(255,255,255,.6);
+      border-radius:22px;
+      box-shadow:0 14px 40px rgba(0,0,0,.15);
+      overflow:hidden;
     }
-    .title{
-      text-align:center;
-      font-size:40px;
-      letter-spacing:-0.5px;
-      margin:0 0 10px;
+    .tree{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:contain;
     }
-    .sub{
-      text-align:center;
-      opacity:0.8;
-      margin:0 0 34px;
-      font-size:15px;
+
+    .ornament{
+      position:absolute;
+      width:90px;
+      height:90px;
+      border-radius:50%;
+      overflow:hidden;
+      border:3px solid #fff;
+      cursor:pointer;
+      box-shadow:0 10px 20px rgba(0,0,0,.2);
+      background:#fff;
     }
-    .paper{
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 22px;
-      padding: 28px 22px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    .ornament img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
-    .letter{
-      white-space: pre-line;
-      line-height: 1.9;
+    .note{
+      position:absolute;
+      right:-6px;
+      bottom:-6px;
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       font-size:16px;
-      opacity:0.95;
+      box-shadow:0 6px 14px rgba(0,0,0,.2);
+    }
+
+    .modalBack{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+    .modal{
+      width:min(720px, 96vw);
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
       text-align:left;
     }
-    .from{
-      margin-top:18px;
-      text-align:right;
-      opacity:0.7;
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .close{
+      border:0;
+      background:#eee;
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .letters{
+      max-height:280px;
+      overflow:auto;
+      background:#f7f7f7;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+    }
+    .item{
+      background:#fff;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:8px;
       font-size:14px;
     }
-    .date{
-      margin-top:34px;
-      text-align:center;
-      opacity:0.55;
-      font-size:12.5px;
+    .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
+    textarea,input{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-bottom:8px;
+      font-size:14px;
+    }
+    button.send{
+      width:100%;
+      padding:10px;
+      border-radius:999px;
+      border:0;
+      background:#333;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1 class="title">연지 생일 축하해</h1>
-    <p class="sub">오늘은 연지를 위한, 연지만을 위해 존재하는 날</p>
+<div class="wrap">
+  <h1>🎄 연지의 트리 편지함</h1>
+  <div class="sub">사진을 눌러서 편지를 남겨줘</div>
 
-    <div class="paper">
-      <div class="letter">
-To. 연지
-연지야, 생일 진심으로 축하해!!
+  <div class="stage">
+    <img src="tree.png" class="tree">
 
-독일로 떠난 지가 벌써 2개월 째구나!!
-우리 메밀밭가고 카페 간 기억이 아직도 선명하고,,,
-왠지 부산에서 너가 어디엔가 있을 것만 같아서 안 믿긴다
-
-타지 생활 많이 힘들지?
-그래도 돌이켜보면 다 추억이고 자산이야
-룰레오에서 한 번 경험해봤잖아~~
-
-오늘 독일에서의 생일
-알차고 행복하게 보내고, 내일부터 또 으쌰으쌰해보자!!
-
-힘들어도 돌아올 곳 있다는 거 잊지 말고!
-난 네가 언제든 전화하면 받으니까
-너무 힘든 순간이 오면 sos 쳐
-
-바로 옆에 있는 것처럼 수다도 떨고
-시시콜콜한 농담하고 그러면서 버티는거지
-
-내 단짝 연지가 없으니 좀 많이 심심하고 외로움
-ㅋㅋ
-
-연지 돌아와서 여행 떠나는 날만을 기다리며,,
-생일 축하해 사랑해 ~!!!
-      </div>
-      <div class="from">From. 양양</div>
+    <div class="ornament" style="left:20%;top:25%;" data-photo="photo1">
+      <img src="photo1.jpg"><div class="note">✉️</div>
     </div>
-
-    <div class="date" id="today"></div>
+    <div class="ornament" style="left:55%;top:35%;" data-photo="photo2">
+      <img src="photo2.jpg"><div class="note">✉️</div>
+    </div>
+    <div class="ornament" style="left:38%;top:60%;" data-photo="photo3">
+      <img src="photo3.jpg"><div class="note">✉️</div>
+    </div>
   </div>
+</div>
 
-  <script>
-    document.getElementById("today").textContent =
-      new Date().toLocaleDateString("ko-KR", { year:"numeric", month:"long", day:"numeric" });
-  </script>
+<div class="modalBack" id="modal">
+  <div class="modal">
+    <div class="top">
+      <strong id="title"></strong>
+      <button class="close" onclick="closeModal()">닫기</button>
+    </div>
+    <div class="letters" id="letters"></div>
+    <input id="writer" placeholder="이름 또는 별명">
+    <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
+    <button class="send" id="send">편지 남기기</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
+  authDomain: "yj-birthday.firebaseapp.com",
+  projectId: "yj-birthday",
+  storageBucket: "yj-birthday.firebasestorage.app",
+  messagingSenderId: "664910382832",
+  appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
+};
+
+const WRITE_KEY = "YJ_TREE_2025_9aK3QzT2";
+const urlKey = new URLSearchParams(location.search).get("k") || "";
+const canWrite = urlKey === WRITE_KEY;
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+await signInAnonymously(auth);
+
+let currentPhoto = "";
+
+document.querySelectorAll(".ornament").forEach(o=>{
+  o.onclick = ()=>openModal(o.dataset.photo);
+});
+
+async function openModal(photo){
+  currentPhoto = photo;
+  document.getElementById("title").textContent = photo + " 편지";
+  document.getElementById("modal").style.display = "flex";
+  await loadLetters();
+}
+
+window.closeModal = ()=> document.getElementById("modal").style.display="none";
+
+async function loadLetters(){
+  const q = query(collection(db,"letters"),
+    where("photoKey","==",currentPhoto),
+    orderBy("createdAt","desc"));
+  const snap = await getDocs(q);
+  const el = document.getElementById("letters");
+  el.innerHTML="";
+  snap.forEach(d=>{
+    const v=d.data();
+    el.innerHTML+=`<div class="item"><div class="meta">${v.writer}</div>${v.message}</div>`;
+  });
+}
+
+document.getElementById("send").onclick = async ()=>{
+  if(!canWrite){ alert("쓰기 권한이 없어요"); return; }
+  await addDoc(collection(db,"letters"),{
+    photoKey: currentPhoto,
+    writer: writer.value||"익명",
+    message: message.value,
+    writeKey: WRITE_KEY,
+    createdAt: serverTimestamp()
+  });
+  message.value="";
+  await loadLetters();
+};
+</script>
 </body>
 </html>
+
