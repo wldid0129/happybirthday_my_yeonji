@@ -367,10 +367,14 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 import {
-  getFirestore, collection, getDocs
+  getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
+import {
+  getFirestore, collection, onSnapshot, query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
@@ -383,6 +387,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+await setPersistence(auth, browserSessionPersistence);  
 const db = getFirestore(app);
 
 function safeText(s){
@@ -460,23 +465,35 @@ document.getElementById("loginBtn").addEventListener("click", async ()=>{
 });
 
 /* ===== 편지 로드(전체) ===== */
+
+let unsubAll = null;
 let allLettersCache = [];
 
-async function loadAllLetters(){
-  const snap = await getDocs(collection(db,"letters"));
-  const list = [];
-  snap.forEach(d=>{
-    const v = d.data();
-    list.push({
-      id: d.id,
-      writer: v.writer || "익명",
-      message: v.message || "",
-      photoKey: v.photoKey || "",
-      createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+function startAllLettersRealtime(){
+  if(unsubAll) unsubAll();
+
+  const q = query(collection(db,"letters"), orderBy("createdAt","desc"));
+
+  unsubAll = onSnapshot(q, (snap)=>{
+    const list = [];
+    snap.forEach(d=>{
+      const v = d.data();
+      list.push({
+        id: d.id,
+        writer: v.writer || "익명",
+        message: v.message || "",
+        photoKey: v.photoKey || "",
+        createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0
+      });
     });
+
+    allLettersCache = list;
+
+    // 지금 화면이 스택이면 즉시 갱신
+    if(envelopeArea.style.display !== "none"){
+      renderEnvelopeStack(allLettersCache);
+    }
   });
-  list.sort((a,b)=> b.createdAtMs - a.createdAtMs);
-  return list;
 }
 
 function renderEnvelopeStack(list){
@@ -507,6 +524,11 @@ mailbox.addEventListener("click", async ()=>{
   if(!loggedIn){ showNeedLogin(); return; }
 
   openModalBase("📮 전체 편지함");
+   lettersEl.style.display = "none";
+  envelopeArea.style.display = "block";
+
+  startAllLettersRealtime();
+});
 
   // 처음엔 스택만 보여주고, 내용은 숨김
   lettersEl.style.display = "none";
