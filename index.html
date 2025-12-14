@@ -205,6 +205,15 @@
     .meta{ font-size:12px; opacity:.6; margin-bottom:4px; }
     .msg{ white-space: pre-line; line-height: 1.7; }
 
+    .editBtn{
+    margin-top:8px;
+    border:0;
+    padding:7px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#eee;
+    }
+
     textarea,input{
       width:100%;
       padding:10px;
@@ -284,16 +293,21 @@
         <button class="close" id="closeBtn">닫기</button>
       </div>
       <div class="letters" id="letters"></div>
-      <input id="writer" placeholder="이름 또는 별명">
+      <div id="formArea">
+      <input id="writer" placeholder="이름">
       <textarea id="message" placeholder="연지에게 남길 편지"></textarea>
       <button class="send" id="send">편지 남기기</button>
-    </div>
+      </div>
+
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, query, where, orderBy, getDocs,
+  serverTimestamp, doc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5tseaOlmlcnZbduKyqo9hsLCiVvIeI4",
@@ -304,7 +318,10 @@ const firebaseConfig = {
   appId: "1:664910382832:web:e6e2a1cf78d02e2fd66435"
 };
 
+// 너의 writeKey
 const WRITE_KEY = "YJ_TREE_2025_9aK3QzT2";
+
+// 링크 키(없으면 보기 전용)
 const urlKey = new URLSearchParams(location.search).get("k") || "";
 const canWrite = (urlKey === WRITE_KEY);
 
@@ -339,12 +356,20 @@ const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("closeBtn");
 const lettersEl = document.getElementById("letters");
 const titleEl = document.getElementById("title");
+const formArea = document.getElementById("formArea");
 const writerEl = document.getElementById("writer");
 const messageEl = document.getElementById("message");
 const sendBtn = document.getElementById("send");
 
 let currentPhoto = "";
+let editingId = null; // 수정 모드일 때만 값 존재
 
+// 보기 전용이면 입력 영역 숨김
+if(!canWrite){
+  formArea.style.display = "none";
+}
+
+// 오너먼트 클릭 → 모달 열기
 document.querySelectorAll(".ornament").forEach(o=>{
   o.addEventListener("click", ()=>openModal(o.dataset.photo));
 });
@@ -353,6 +378,11 @@ function openModal(photo){
   currentPhoto = photo;
   titleEl.textContent = photo + " 편지";
   modal.style.display = "flex";
+
+  // 모달 열 때 수정 모드 해제
+  editingId = null;
+  if(canWrite) sendBtn.textContent = "편지 남기기";
+
   loadLetters();
 }
 
@@ -362,6 +392,50 @@ function closeModal(){
 closeBtn.addEventListener("click", closeModal);
 modal.addEventListener("click", (e)=>{
   if(e.target === modal) closeModal();
+});
+
+// 편지 목록 렌더
+function renderLetters(list){
+  if(list.length === 0){
+    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어.</div></div>`;
+    return;
+  }
+
+  const myUid = auth.currentUser.uid;
+
+  lettersEl.innerHTML = list.map(v=>{
+    const safeMsg = (v.message || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    const canEditMine = canWrite && v.authorUid === myUid;
+
+    return `
+      <div class="item">
+        <div class="meta">${v.writer}</div>
+        <div class="msg">${safeMsg}</div>
+        ${canEditMine ? `<button class="editBtn" data-id="${v.id}">수정</button>` : ``}
+      </div>
+    `;
+  }).join("");
+}
+
+// 수정 버튼 클릭 → textarea에 불러오기
+lettersEl.addEventListener("click", (e)=>{
+  const btn = e.target.closest(".editBtn");
+  if(!btn) return;
+
+  // 보기 전용에서는 수정 자체가 없음
+  if(!canWrite) return;
+
+  const id = btn.dataset.id;
+  // 해당 메시지를 화면에서 다시 찾아서 textarea에 넣기(간단 방식)
+  const item = btn.closest(".item");
+  const msgDiv = item.querySelector(".msg");
+  const writerDiv = item.querySelector(".meta");
+
+  editingId = id;
+  writerEl.value = (writerDiv?.textContent || "익명").trim();
+  messageEl.value = (msgDiv?.textContent || "").trim();
+  sendBtn.textContent = "수정 저장";
+  messageEl.focus();
 });
 
 async function loadLetters(){
@@ -376,25 +450,20 @@ async function loadLetters(){
   snap.forEach(d=>{
     const v = d.data();
     list.push({
+      id: d.id,
       writer: v.writer || "익명",
-      message: v.message || ""
+      message: v.message || "",
+      authorUid: v.authorUid || ""
     });
   });
 
-  if(list.length === 0){
-    lettersEl.innerHTML = `<div class="item"><div class="msg">아직 편지가 없어. 첫 편지를 남겨줘.</div></div>`;
-    return;
-  }
-
-  lettersEl.innerHTML = list.map(v=>{
-    const safe = (v.message || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
-    return `<div class="item"><div class="meta">${v.writer}</div><div class="msg">${safe}</div></div>`;
-  }).join("");
+  renderLetters(list);
 }
 
+// 저장/수정 저장
 sendBtn.addEventListener("click", async ()=>{
   if(!canWrite){
-    alert("쓰기 권한이 없어요. 링크에 ?k=키 를 포함한 주소로 접속해야 해.");
+    alert("보기 전용 링크야. 쓰기 링크(?k=...)로 접속해야 해.");
     return;
   }
 
@@ -406,13 +475,29 @@ sendBtn.addEventListener("click", async ()=>{
   }
 
   sendBtn.disabled = true;
-  await addDoc(collection(db,"letters"),{
-    photoKey: currentPhoto,
-    writer,
-    message,
-    writeKey: WRITE_KEY,
-    createdAt: serverTimestamp()
-  });
+
+  // 수정 모드
+  if(editingId){
+    await updateDoc(doc(db, "letters", editingId), {
+      writer,
+      message,
+      // Rules 통과용(필수)
+      writeKey: urlKey
+    });
+    editingId = null;
+    sendBtn.textContent = "편지 남기기";
+  }else{
+    // 새 편지
+    await addDoc(collection(db,"letters"),{
+      photoKey: currentPhoto,
+      writer,
+      message,
+      authorUid: auth.currentUser.uid,
+      writeKey: urlKey,
+      createdAt: serverTimestamp()
+    });
+  }
+
   messageEl.value = "";
   sendBtn.disabled = false;
   await loadLetters();
@@ -464,5 +549,4 @@ function tick(){
 }
 tick();
 </script>
-</body>
-</html>
+
